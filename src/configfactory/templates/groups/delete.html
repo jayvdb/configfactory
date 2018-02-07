@@ -1,0 +1,15 @@
+{% extends 'layouts/main.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans 'Delete' %} <strong>{{ group }}</strong>{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {% blocktrans with group=group %}
+            <p>Are you sure you want to delete <strong>{{ group }}</strong> ?</p>
+        {% endblocktrans %}
+        <button class="btn btn-danger">Yes, delete</button>
+        <a href="{% url 'groups' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+    </form>
+{% endblock %}

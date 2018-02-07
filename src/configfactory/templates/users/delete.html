@@ -1,0 +1,15 @@
+{% extends 'layouts/main.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans 'Delete' %} <strong>{{ user }}</strong>{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {% blocktrans with user=user %}
+            <p>Are you sure you want to delete <strong>{{ user }}</strong> ?</p>
+        {% endblocktrans %}
+        <button class="btn btn-danger">{% trans 'Yes, delete' %}</button>
+        <a href="{% url 'users' %}" class="btn btn-default">{% trans 'Cancel' %}</a>
+    </form>
+{% endblock %}

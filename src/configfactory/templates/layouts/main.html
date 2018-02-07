@@ -1,0 +1,26 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block page_js %}
+    <script src="{% static 'vendor/jquery/js/jquery-1.11.1.js' %}"></script>
+    <script src="{% static 'vendor/jquery-ace/ace/ace.js' %}"></script>
+    <script src="{% static 'vendor/jquery-ace/ace/theme-twilight.js' %}"></script>
+    <script src="{% static 'vendor/jquery-ace/ace/mode-json.js' %}"></script>
+    <script src="{% static 'vendor/jquery-ace/jquery-ace.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.js' %}"></script>
+{% endblock %}
+
+{% block body %}
+    <div id="wrapper" class="toggled">
+        <div id="sidebar-wrapper">
+            {% include 'includes/sidebar_menu.html' %}
+        </div>
+        <div id="page-content-wrapper">
+            {% include 'includes/messages.html' %}
+            {% block page_head %}
+                <h3>{% block page_title %}{% endblock %}</h3><hr>
+            {% endblock %}
+            {% block content_wrapper %}{% block content %}{% endblock %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

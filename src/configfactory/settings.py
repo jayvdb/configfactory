@@ -1,0 +1,311 @@
+import os
+
+import appdirs
+import dj_database_url
+from django.core.exceptions import ImproperlyConfigured
+
+from configfactory.support import appenv, config, dirs
+from configfactory.support.logging import debug_logging
+
+###########################################
+# Main settings
+###########################################
+DEBUG = appenv.debug_enabled()
+
+SECRET_KEY = '28$0ld^(u&7o%f_e4sqh@rl&lere4kzsca#@&6@f+#5k7r963b'
+
+ROOT_URLCONF = 'configfactory.urls'
+
+ALLOWED_HOSTS = ['*']
+
+INTERNAL_IPS = ['127.0.0.1']
+
+###########################################
+# Database settings
+###########################################
+DATABASES = {
+    'default': dj_database_url.config(
+        env='CONFIGFACTORY_DATABASE_URL',
+        default=config['database.url']
+    )
+}
+
+DATABASE_DB_TABLES_REPLACE = False
+
+DATABASE_DB_TABLES_PREFIX = config.get('database.prefix')
+
+DATABASE_DB_TABLES = {
+    'auth_group': 'groups',
+    'auth_group_permissions': 'group_permissions',
+    'auth_permission': 'permissions',
+    'configfactory_component': 'components',
+    'configfactory_config': 'configs',
+    'configfactory_environment': 'environments',
+    'configfactory_user': 'users',
+    'configfactory_user_groups': 'user_groups',
+    'configfactory_user_user_permissions': 'user_permissions',
+    'configfactory_logentry': 'log_entries',
+    'configfactory_backup': 'backups',
+    'django_content_type': 'content_types',
+    'django_migrations': 'migrations',
+    'django_session': 'sessions',
+    'guardian_groupobjectpermission': 'group_object_permissions',
+    'guardian_userobjectpermission': 'user_object_permissions',
+}
+
+###########################################
+# Template settings
+###########################################
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'configfactory.context_processors.components',
+                'configfactory.context_processors.environments',
+                'configfactory.context_processors.auth',
+                'configfactory.context_processors.version',
+                'django.template.context_processors.request',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        }
+    },
+]
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.common.CommonMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.messages.middleware.MessageMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'configfactory.middleware.logging_middleware',
+    'configfactory.middleware.environments_middleware',
+    'configfactory.middleware.components_middleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+
+INSTALLED_APPS = [
+
+    'configfactory',
+
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.staticfiles',
+    'django.contrib.sessions',
+    'crispy_forms',
+    'guardian',
+    'debug_toolbar',
+
+]
+
+######################################
+# Static settings
+######################################
+STATIC_URL = '/static/'
+
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+)
+
+STATICFILES_DIRS = (
+    dirs.package_dir('static'),
+)
+
+######################################
+# Logging settings
+######################################
+LOGGING_DIR = config.get('logging.dir', appdirs.user_data_dir('logs'))
+
+LOGGING_FILENAME = config.get('logging.filename', 'configfactory.log')
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'verbose': {
+            'format': "[%(asctime)-15s] (%(name)s) %(levelname)s - %(message)s",
+        },
+        'colored': {
+            '()': 'colorlog.ColoredFormatter',
+            'format': "%(log_color)s[%(asctime)-15s] (%(name)s) %(levelname)s - %(message)s",
+        },
+    },
+    'filters': {
+        'require_debug_false': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'colored'
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': os.path.join(
+                LOGGING_DIR,
+                LOGGING_FILENAME
+            ),
+            'maxBytes': 5000000,
+            'backupCount': 10,
+            'formatter': 'verbose'
+        },
+    },
+    'loggers': {
+        # 'django': {
+        #     'level': 'WARNING',
+        #     'handlers': ['file'],
+        # },
+        'django.request': {
+            'handlers': ['file'],
+            'level': 'ERROR',
+            'propagate': False,
+        },
+        'django.db': {
+            'level': 'DEBUG',
+            'handlers': [],
+            'propagate': False,
+        },
+        'configfactory': {
+            'level': 'DEBUG',
+            'handlers': ['file'],
+            'propagate': False,
+        },
+    }
+}
+
+if DEBUG:
+    debug_logging(LOGGING, handler='console')
+
+###########################################
+# i10n / i18n settings
+###########################################
+LANGUAGE_CODE = 'en-US'
+
+TIME_ZONE = 'UTC'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
+###########################################
+# Cache settings
+###########################################
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    },
+}
+
+###########################################
+# Security settings
+###########################################
+ENCRYPT_ENABLED = config.get('encrypt_enabled', False)
+
+ENCRYPT_KEY = SECRET_KEY
+
+# Check encrypt key length
+if ENCRYPT_ENABLED:
+    if not ENCRYPT_KEY or len(ENCRYPT_KEY) < 32:
+        raise ImproperlyConfigured(
+            'Encrypt key must set and greater '
+            'or equal to 32 symbols.'
+        )
+
+ENCRYPT_PREFIX = '$$$enc$$$:'
+
+CLEANSED_HIDDEN = config.get(
+    'cleansed.hidden',
+    default='api token key secret pass password signature'
+)
+
+CLEANSED_SUBSTITUTE = config.get(
+    'cleansed.substitute',
+    default='***************'
+)
+
+######################################
+# Environments settings
+######################################
+DEFAULT_ENVIRONMENTS = [
+    {
+        'name': 'Development',
+        'alias': 'development'
+    }
+]
+
+BASE_ENVIRONMENT = 'base'
+
+###########################################
+# Config store settings
+###########################################
+CONFIG_STORE = {
+    'backend': config.get('config_store.backend', default='database'),
+    'options': config.get('config_store.options')
+}
+
+###########################################
+# Backups settings
+###########################################
+BACKUPS_INTERVAL = config.get('backup.interval', default=7200)  # Every 2 hours
+
+BACKUPS_CLEAN_INTERVAL = config.get('backup.clean_interval', default=21600)  # Every 6 hours
+
+BACKUPS_CLEAN_THRESHOLD = config.get('backup.clean_threshold', default=168)  # Every week
+
+###########################################
+# Auth / users settings
+###########################################
+DEFAULT_USERS = [
+    {
+        'username': 'admin',
+        'password': 'admin',
+        'is_superuser': True,
+    },
+    {
+        'username': 'guest',
+        'password': 'guest',
+    }
+]
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
+AUTH_USER_MODEL = 'configfactory.User'
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    'guardian.backends.ObjectPermissionBackend'
+)
+
+ANONYMOUS_USER_NAME = None
+
+LOGIN_URL = 'login'
+
+LOGIN_REDIRECT_URL = 'dashboard'
+
+###########################################
+# Crispy forms settings
+###########################################
+CRISPY_TEMPLATE_PACK = 'bootstrap3'

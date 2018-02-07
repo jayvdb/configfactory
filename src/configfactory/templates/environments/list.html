@@ -1,0 +1,71 @@
+{% extends 'layouts/main.html' %}
+{% load i18n pagination icons %}
+
+{% block page_head %}
+    <div class="row">
+        <div class="col-md-8">
+            <h3>{% trans 'Environments' %}</h3>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'create_environment' %}" class="btn btn-success pull-right">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;{% trans 'ADD ENVIRONMENT' %}
+            </a>
+        </div>
+    </div>
+    <hr>
+{% endblock %}
+
+{% block content %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{% trans 'Name' %}</th>
+                <th>{% trans 'Is active?' %}</th>
+                <th>{% trans 'Fallback environment' %}</th>
+                <th>{% trans 'Order' %}</th>
+                <th style="min-width: 120px"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for environment in environments %}
+                <tr>
+                    <td>
+                        {% if not environment.is_base %}
+                            <a href="{% url 'update_environment' alias=environment.alias %}">{{ environment.name }}</a>
+                        {% else %}
+                            {{ environment.name }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% boolean_icon environment.is_active %}
+                    </td>
+                    <td>
+                        {% if environment.fallback_id %}
+                            <a href="#">{{ environment.fallback.name }}</a>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ environment.order }}
+                    </td>
+                    <td>
+                        {% if not environment.is_base %}
+                            <div class="btn-group btn-group-sm pull-right">
+                                <a href="{% url 'update_environment' alias=environment.alias %}" class="btn btn-default" data-toggle="tooltip" title="{% trans 'Edit' %}">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <a href="{% url 'delete_environment' alias=environment.alias %}" class="btn btn-default" data-toggle="tooltip" title="{% trans 'Delete' %}">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="5">{% trans 'No environments found.' %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% pagination request page_obj %}
+{% endblock %}

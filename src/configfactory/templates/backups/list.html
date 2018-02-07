@@ -1,0 +1,63 @@
+{% extends 'layouts/main.html' %}
+{% load i18n pagination %}
+
+{% block page_head %}
+    <div class="row">
+        <div class="col-md-8">
+            <h3>{% trans 'Backup' %}</h3>
+        </div>
+        <div class="col-md-4">
+            <div class="pull-right">
+                <a href="{% url 'import_backup' %}" class="btn btn-primary">
+                    <i class="fa fa-download"></i>&nbsp;&nbsp;{% trans 'IMPORT BACKUP' %}
+                </a>
+                <a href="{% url 'dump_backup' %}" class="btn btn-success">
+                    <i class="fa fa-plus-square"></i>&nbsp;&nbsp;{% trans 'CREATE BACKUP' %}
+                </a>
+            </div>
+        </div>
+    </div>
+    <hr>
+{% endblock %}
+
+{% block content %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{% trans 'Time' %}</th>
+                <th>{% trans 'User' %}</th>
+                <th>{% trans 'Comment' %}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for backup in backups %}
+                <tr>
+                    <td>{{ backup.created_at }}</td>
+                    <td>{{ backup.user|default_if_none:'' }}</td>
+                    <td>{{ backup.comment|default_if_none:'' }}</td>
+                    <td>
+                        {% if current_user.is_superuser %}
+                            <div class="btn-group btn-group-sm pull-right" role="group">
+                                <a href="{% url 'export_backup' pk=backup.pk %}" class="btn btn-default" data-toggle="tooltip" title="{% trans 'Export' %}">
+                                    <i class="fa fa-upload"></i>
+                                </a>
+                                <a href="{% url 'load_backup' pk=backup.pk %}" class="btn btn-default" data-toggle="tooltip" title="{% trans 'Load' %}">
+                                    <i class="fa fa-download"></i>
+                                </a>
+                                <a href="{% url 'delete_backup' pk=backup.pk %}" class="btn btn-default" data-toggle="tooltip" title="{% trans 'Delete' %}">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center">{% trans 'No backups created yet.' %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% pagination request page_obj %}
+{% endblock %}

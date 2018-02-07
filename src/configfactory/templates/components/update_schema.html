@@ -1,0 +1,25 @@
+{% extends 'layouts/main.html' %}
+{% load i18n buttons %}
+
+{% block page_title %}
+    {% trans 'Edit' %} {{ component.name }} <small><strong>[{{ component.alias }}]</strong></small> {% trans 'schema' %}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.schema }}
+        <br>
+        <button class="btn btn-primary" onclick="return confirm('{% trans 'Are you sure you want to update settings?' %}')">
+            <i class="fa fa-download"></i>
+            {% trans 'Update schema' %}
+        </button>
+        {% back_btn request 'component' alias=component.alias %}
+    </form>
+{% endblock %}
+
+{% block page_inline_js %}
+    <script>
+        $('#id_schema').ace({theme: 'twilight', lang: 'json'});
+    </script>
+{% endblock %}

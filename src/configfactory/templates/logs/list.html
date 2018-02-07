@@ -1,0 +1,67 @@
+{% extends 'layouts/main.html' %}
+{% load i18n pagination icons crispy_forms_field %}
+
+{% block page_title %}{% trans 'Logs' %}{% endblock %}
+
+{% block content %}
+    <div class="well">
+        <form action="">
+            <div class="row">
+                {% if current_user.is_superuser %}
+                    <div class="col-md-4">
+                        {{ filter.form.user.label_tag }}
+                        {% crispy_field filter.form.user %}
+                    </div>
+                {% endif %}
+                <div class="col-md-4">
+                    {{ filter.form.content_type.label_tag }}
+                    {% crispy_field filter.form.content_type %}
+                </div>
+                <div class="col-md-4">
+                    {{ filter.form.object_id.label_tag }}
+                    {% crispy_field filter.form.object_id %}
+                </div>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">{% trans 'Search' %}</button>
+            <button type="reset" class="btn btn-default">{% trans 'Reset' %}</button>
+        </form>
+    </div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{% trans 'Action' %}</th>
+                <th>{% trans 'User' %}</th>
+                <th>{% trans 'Time' %}</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for log in logs %}
+                <tr>
+                    <td>{% action_icon log.action_type %}&nbsp;&nbsp;{{ log.message_html|safe }}</td>
+                    <td>
+                        {% if log.user %}
+                            <a href="{% url 'update_user' pk=log.user.pk %}">{{ log.user }}</a>
+                        {% endif %}
+                    </td>
+                    <td>{{ log.created_at|timesince }} {% trans 'ago' %}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm pull-right">
+                            <a href="{% url 'log' pk=log.pk %}" class="btn btn-default" data-toggle="tooltip" title="{% trans 'Detail' %}">
+                                <i class="fa fa-eye"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4">
+                        <p class="text-center">{% trans 'No logs found.' %}</p>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% pagination request page_obj %}
+{% endblock %}

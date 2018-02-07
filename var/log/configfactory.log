@@ -1,0 +1,273 @@
+[2018-02-06 11:27:43,587] (configfactory.middleware) INFO - [127.0.0.1] GET /: {}
+[2018-02-06 11:27:43,772] (configfactory.middleware) INFO - [127.0.0.1] GET /login/: {"next": "/"}
+[2018-02-06 11:27:43,884] (django.request) ERROR - Internal Server Error: /login/
+Traceback (most recent call last):
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/utils/deprecation.py", line 142, in __call__
+    response = self.process_response(request, response)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/debug_toolbar/middleware.py", line 132, in process_response
+    panel.generate_stats(request, response)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/debug_toolbar/panels/staticfiles.py", line 128, in generate_stats
+    'staticfiles_finders': self.get_staticfiles_finders(),
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/debug_toolbar/panels/staticfiles.py", line 139, in get_staticfiles_finders
+    for path, finder_storage in finder.list([]):
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/contrib/staticfiles/finders.py", line 112, in list
+    for path in utils.get_files(storage, ignore_patterns):
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/contrib/staticfiles/utils.py", line 28, in get_files
+    directories, files = storage.listdir(location)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/files/storage.py", line 397, in listdir
+    for entry in os.listdir(path):
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/antonruhlov/Projects/CF/configfactory/configfactory/support/static'
+[2018-02-06 11:27:44,342] (configfactory.middleware) INFO - [127.0.0.1] GET /favicon.ico: {}
+[2018-02-06 11:27:44,363] (django.request) ERROR - Internal Server Error: /favicon.ico
+Traceback (most recent call last):
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/utils/deprecation.py", line 142, in __call__
+    response = self.process_response(request, response)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/debug_toolbar/middleware.py", line 132, in process_response
+    panel.generate_stats(request, response)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/debug_toolbar/panels/staticfiles.py", line 128, in generate_stats
+    'staticfiles_finders': self.get_staticfiles_finders(),
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/debug_toolbar/panels/staticfiles.py", line 139, in get_staticfiles_finders
+    for path, finder_storage in finder.list([]):
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/contrib/staticfiles/finders.py", line 112, in list
+    for path in utils.get_files(storage, ignore_patterns):
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/contrib/staticfiles/utils.py", line 28, in get_files
+    directories, files = storage.listdir(location)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/files/storage.py", line 397, in listdir
+    for entry in os.listdir(path):
+FileNotFoundError: [Errno 2] No such file or directory: '/Users/antonruhlov/Projects/CF/configfactory/configfactory/support/static'
+[2018-02-06 11:28:35,727] (configfactory.middleware) INFO - [127.0.0.1] GET /login/: {"next": "/"}
+[2018-02-06 11:28:36,093] (configfactory.middleware) INFO - [127.0.0.1] GET /favicon.ico: {}
+[2018-02-06 11:28:36,132] (django.request) WARNING - Not Found: /favicon.ico
+[2018-02-06 11:29:16,706] (configfactory.middleware) INFO - [127.0.0.1] GET /login/: {"next": "/"}
+[2018-02-06 11:29:22,885] (configfactory.middleware) INFO - [127.0.0.1] POST /login/: {"login": "Login", "csrfmiddlewaretoken": "iSqIT3UQkJPDSWRIEnBjesv3iNGSNSBnM9K7grbD4OryWXwTeUWvEAVR0RQwt9Rq", "username": "anton.ruhlov", "password": "Init32167"}
+[2018-02-06 11:29:23,134] (configfactory.middleware) INFO - [127.0.0.1] GET /: {}
+[2018-02-06 11:29:25,760] (configfactory.middleware) INFO - [127.0.0.1] GET /backups/: {}
+[2018-02-06 11:29:27,552] (configfactory.middleware) INFO - [127.0.0.1] GET /backups/import/: {}
+[2018-02-06 11:30:58,096] (configfactory.middleware) INFO - [127.0.0.1] POST /backups/import/: {"csrfmiddlewaretoken": "Zm2xVdu2elzqiul2vMbJPKYjEuQo0CRSV1rsbhxJvufzjbi4iSuOUMbZEoPRWckL", "import": "Import"}
+[2018-02-06 11:31:06,599] (configfactory.middleware) INFO - [127.0.0.1] GET /backups/: {}
+[2018-02-06 11:31:11,286] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/: {}
+[2018-02-06 11:31:11,292] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/base/: {}
+[2018-02-06 11:31:12,837] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/production/: {}
+[2018-02-06 11:31:12,888] (django.request) ERROR - Internal Server Error: /components/recovery-service/production/
+Traceback (most recent call last):
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/base.py", line 68, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/contrib/auth/mixins.py", line 56, in dispatch
+    return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/mixins.py", line 18, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/base.py", line 88, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 278, in get
+    response = super().get(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/detail.py", line 116, in get
+    context = self.get_context_data(object=self.object)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 297, in get_context_data
+    environment=environment,
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/services/components.py", line 88, in get_component_settings
+    data = dicthelper.merge(base_settings, env_settings)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 24, in merge
+    for key, value in d2.items():
+AttributeError: 'str' object has no attribute 'items'
+[2018-02-06 11:31:49,501] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/production/: {}
+[2018-02-06 11:33:31,093] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/base/edit/: {}
+[2018-02-06 11:33:37,727] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/base/edit/: {}
+[2018-02-06 11:33:39,904] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/production/edit/: {}
+[2018-02-06 11:33:39,959] (django.request) ERROR - Internal Server Error: /components/recovery-service/production/edit/
+Traceback (most recent call last):
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/base.py", line 68, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/contrib/auth/mixins.py", line 56, in dispatch
+    return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/mixins.py", line 18, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/base.py", line 88, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 236, in get
+    return super(BaseUpdateView, self).get(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 174, in get
+    return self.render_to_response(self.get_context_data())
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 369, in get_context_data
+    data = super().get_context_data(**kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 93, in get_context_data
+    kwargs['form'] = self.get_form()
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 45, in get_form
+    return form_class(**self.get_form_kwargs())
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 391, in get_form_kwargs
+    'settings': self.settings_dict
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/utils/functional.py", line 35, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 364, in settings_dict
+    environment=self.environment,
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/services/components.py", line 88, in get_component_settings
+    data = dicthelper.merge(base_settings, env_settings)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 24, in merge
+    for key, value in d2.items():
+AttributeError: 'str' object has no attribute 'items'
+[2018-02-06 11:33:51,601] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/production/edit/: {}
+[2018-02-06 11:33:51,657] (django.request) ERROR - Internal Server Error: /components/recovery-service/production/edit/
+Traceback (most recent call last):
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/base.py", line 68, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/contrib/auth/mixins.py", line 56, in dispatch
+    return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/mixins.py", line 18, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/base.py", line 88, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 236, in get
+    return super(BaseUpdateView, self).get(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 174, in get
+    return self.render_to_response(self.get_context_data())
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 369, in get_context_data
+    data = super().get_context_data(**kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 93, in get_context_data
+    kwargs['form'] = self.get_form()
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 45, in get_form
+    return form_class(**self.get_form_kwargs())
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 391, in get_form_kwargs
+    'settings': self.settings_dict
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/utils/functional.py", line 35, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 364, in settings_dict
+    environment=self.environment,
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/services/components.py", line 88, in get_component_settings
+    data = dicthelper.merge(base_settings, env_settings)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 24, in merge
+    for key, value in d2.items():
+AttributeError: 'str' object has no attribute 'items'
+[2018-02-06 11:34:02,281] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/production/edit/: {}
+[2018-02-06 11:36:27,245] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/production/edit/: {}
+[2018-02-06 11:36:35,919] (django.request) ERROR - Internal Server Error: /components/recovery-service/production/edit/
+Traceback (most recent call last):
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/base.py", line 68, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/contrib/auth/mixins.py", line 56, in dispatch
+    return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/mixins.py", line 18, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/base.py", line 88, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 236, in get
+    return super(BaseUpdateView, self).get(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 174, in get
+    return self.render_to_response(self.get_context_data())
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 369, in get_context_data
+    data = super().get_context_data(**kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 93, in get_context_data
+    kwargs['form'] = self.get_form()
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 45, in get_form
+    return form_class(**self.get_form_kwargs())
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 391, in get_form_kwargs
+    'settings': self.settings_dict
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/utils/functional.py", line 35, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 364, in settings_dict
+    environment=self.environment,
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/services/components.py", line 88, in get_component_settings
+    data = dicthelper.merge(base_settings, env_settings)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 24, in merge
+    for key, value in d2.items():
+AttributeError: 'str' object has no attribute 'items'
+[2018-02-06 11:36:35,922] (django.request) ERROR - Internal Server Error: /components/recovery-service/production/edit/
+Traceback (most recent call last):
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/exception.py", line 41, in inner
+    response = get_response(request)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/base.py", line 187, in _get_response
+    response = self.process_exception_by_middleware(e, request)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/core/handlers/base.py", line 185, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/base.py", line 68, in view
+    return self.dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/contrib/auth/mixins.py", line 56, in dispatch
+    return super(LoginRequiredMixin, self).dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/mixins.py", line 18, in dispatch
+    return super().dispatch(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/base.py", line 88, in dispatch
+    return handler(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 236, in get
+    return super(BaseUpdateView, self).get(request, *args, **kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 174, in get
+    return self.render_to_response(self.get_context_data())
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 369, in get_context_data
+    data = super().get_context_data(**kwargs)
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 93, in get_context_data
+    kwargs['form'] = self.get_form()
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/views/generic/edit.py", line 45, in get_form
+    return form_class(**self.get_form_kwargs())
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 391, in get_form_kwargs
+    'settings': self.settings_dict
+  File "/Users/antonruhlov/.virtualenvs/npupload/lib/python3.5/site-packages/django/utils/functional.py", line 35, in __get__
+    res = instance.__dict__[self.name] = self.func(instance)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/views/components.py", line 364, in settings_dict
+    environment=self.environment,
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/services/components.py", line 88, in get_component_settings
+    data = dicthelper.merge(base_settings, env_settings)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 26, in merge
+    ret[key] = merge(ret[key], value)
+  File "/Users/antonruhlov/Projects/CF/configfactory/configfactory/utils/dicthelper.py", line 24, in merge
+    for key, value in d2.items():
+AttributeError: 'str' object has no attribute 'items'
+[2018-02-06 11:37:23,545] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/production/edit/: {}
+[2018-02-06 11:37:30,787] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/base/edit/: {}
+[2018-02-06 11:39:54,105] (configfactory.middleware) INFO - [127.0.0.1] GET /api/: {}
+[2018-02-06 11:39:56,025] (configfactory.middleware) INFO - [127.0.0.1] GET /api/production/: {}
+[2018-02-06 11:40:05,329] (configfactory.middleware) INFO - [127.0.0.1] GET /api/staging/: {}
+[2018-02-06 11:40:08,539] (configfactory.middleware) INFO - [127.0.0.1] GET /api/development/: {}
+[2018-02-06 11:40:15,339] (configfactory.middleware) INFO - [127.0.0.1] GET /components/recovery-service/edit/: {"next": "/components/recovery-service/production/edit/"}

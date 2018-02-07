@@ -1,0 +1,9 @@
+<ul class="sidebar-nav">
+    {% for component in components %}
+        <li>
+            <a href="{% url 'component' alias=component.alias %}">
+                <i class="fa fa-cube fa-fw"></i>&nbsp;{{ component.name|upper }}
+            </a>
+        </li>
+    {% endfor %}
+</ul>

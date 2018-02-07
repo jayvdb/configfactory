@@ -1,0 +1,63 @@
+{% load i18n %}
+
+{% if current_user.is_authenticated %}
+    <div id="navbar" class="navbar-collapse collapse">
+        {% if current_user.is_superuser %}
+            <a href="{% url 'create_component' %}" class="btn btn-success btn-xs-block navbar-btn pull-left">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;{% trans 'ADD COMPONENT' %}
+            </a>
+        {% endif %}
+        <ul class="nav navbar-nav" style="margin-left: 12px">
+            {% if current_user.is_superuser %}
+                <li>
+                    <a href="{% url 'environments' %}">
+                        <i class="fa fa-envira"></i>&nbsp;&nbsp;{% trans 'ENVIRONMENTS' %}
+                    </a>
+                </li>
+            {% endif %}
+            <li>
+                <a href="{% url 'backups' %}">
+                    <i class="fa fa-database"></i>&nbsp;&nbsp;{% trans 'BACKUPS' %}
+                </a>
+            </li>
+            {% if current_user.is_superuser %}
+                <li>
+                    <a href="{% url 'logs' %}">
+                        <i class="fa fa-file-text"></i>&nbsp;&nbsp;{% trans 'LOGS' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'users' %}">
+                        <i class="fa fa-users"></i>&nbsp;&nbsp;{% trans 'USERS' %}
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'groups' %}">
+                        <i class="fa fa-lock"></i>&nbsp;&nbsp;{% trans 'GROUPS' %}
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <i class="fa fa-user"></i>&nbsp;&nbsp;{{ current_user }}
+                    <span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                    <li>
+                        <a href="{% url 'profile' %}">
+                            <i class="fa fa-user"></i>&nbsp;&nbsp;{% trans 'Profile' %}
+                        </a>
+                    </li>
+                    <li role="separator" class="divider"></li>
+                    <li>
+                        <a href="{% url 'logout' %}">
+                            <i class="fa fa-sign-out"></i>&nbsp;&nbsp;{% trans 'Logout' %}
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+{% endif %}

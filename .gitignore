@@ -1,0 +1,27 @@
+*.egg
+*.egg-info
+*.pyo
+*.pt.py
+*.txt.py
+*.swp
+*.sqlite3
+.project
+.pydevproject
+.build
+.release
+.penv/
+.eggs/
+.idea/
+build/
+/dist/
+ideadb
+exception.log
+__pycache__
+.env
+configfactory.yml
+
+# Unit test / coverage reports
+.coverage
+.tox
+.cache
+.pytest_cache

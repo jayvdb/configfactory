@@ -1,0 +1,73 @@
+{% extends 'layouts/main.html' %}
+{% load i18n guardian_tags %}
+
+{% block page_head %}
+    <div class="row">
+        <div class="col-md-8">
+            <h3>{{ component.name }} <small><strong>[{{ component.alias }}]</strong></small></h3>
+        </div>
+        <div class="col-md-4">
+            <ul class="nav nav-pills pull-right">
+                {% if 'view_component' in component_perms  and 'view_environment' in environment_perms %}
+                    <li>
+                        <a href="{% url 'component_settings' alias=component.alias environment=current_environment.alias %}" data-toggle="tooltip" title="{% trans 'Flatten View' %}">
+                            <i class="fa fa-eye"></i>
+                        </a>
+                    </li>
+                {% endif %}
+                {% if 'change_component' in component_perms and 'change_environment' in environment_perms %}
+                    <li class="active">
+                        <a href="{% url 'update_component_settings' alias=component.alias environment=current_environment.alias %}" data-toggle="tooltip" title="{% trans 'Edit' %}">
+                            <i class="fa fa-pencil-square-o"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+    <hr>
+{% endblock %}
+
+{% block content %}
+    {% if not component.is_global %}
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="nav nav-pills pull-left">
+                    {% for environment in change_environments %}
+                        <li class="{% if environment.alias == current_environment.alias %}active{% endif %}">
+                            <a href="{% url 'update_component_settings' alias=component.alias environment=environment.alias %}">{{ environment.name|upper }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <hr>
+    {% endif %}
+    <form method="post">
+        {% csrf_token %}
+        {{ form.settings }}
+        <br>
+        <button class="btn btn-primary" onclick="return confirm('{% trans 'Are you sure you want to update settings?' %}')">
+            <i class="fa fa-download"></i>&nbsp;&nbsp;{% trans 'Update' %}
+        </button>
+        <a href="{% url 'edit_component' alias=component.alias %}?next={{ request.path }}" class="btn btn-primary">
+            <i class="fa fa-pencil"></i>&nbsp;&nbsp;{% trans 'Edit' %}
+        </a>
+        {% if component.require_schema %}
+            <a href="{% url 'edit_component_schema' alias=component.alias %}?next={{ request.path }}" class="btn btn-primary">
+                <i class="fa fa-pencil-square-o"></i>&nbsp;&nbsp;{% trans 'Edit schema' %}
+            </a>
+        {% endif %}
+        {% if 'delete_component' in component_perms %}
+            <a href="{% url 'delete_component' alias=component.alias %}?next={{ request.path }}" class="btn btn-danger">
+                <i class="fa fa-trash-o"></i>&nbsp;&nbsp;{% trans 'Delete' %}
+            </a>
+        {% endif %}
+    </form>
+{% endblock %}
+
+{% block page_inline_js %}
+    <script>
+        $('#id_settings').ace({theme: 'twilight', lang: 'json'});
+    </script>
+{% endblock %}

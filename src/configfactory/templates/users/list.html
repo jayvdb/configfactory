@@ -1,0 +1,76 @@
+{% extends 'layouts/main.html' %}
+{% load i18n icons pagination %}
+
+{% block page_head %}
+    <div class="row">
+        <div class="col-md-8">
+            <h3>{% trans 'Users' %}</h3>
+        </div>
+        <div class="col-md-4">
+            <a href="{% url 'create_user' %}" class="btn btn-success pull-right">
+                <i class="fa fa-plus"></i>&nbsp;&nbsp;{% trans 'ADD USER' %}
+            </a>
+        </div>
+    </div>
+    <hr>
+{% endblock %}
+
+{% block content %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>{% trans 'Username' %}</th>
+                <th>{% trans 'Email' %}</th>
+                <th>{% trans 'Full Name' %}</th>
+                <th>{% trans 'Last login' %}</th>
+                <th>{% trans 'Is active?' %}</th>
+                <th>{% trans 'Is superadmin?' %}</th>
+                <th style="min-width: 120px"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+                <tr>
+                    <td>
+                        {% if current_user.is_superuser %}
+                            <a href="{% url 'update_user' pk=user.pk %}">{{ user.username }}</a>
+                        {% else %}
+                            {{ user.username }}
+                        {% endif %}
+                    </td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.get_full_name }}</td>
+                    <td>
+                        {% if user.last_login %}
+                            <span title="{{ user.last_login|date:'Y-m-d H:i:s' }}">
+                                {{ user.last_login|timesince }} {% trans 'ago' %}
+                            </span>
+                        {% endif %}
+                    </td>
+                    <td>{% boolean_icon user.is_active %}</td>
+                    <td>{% boolean_icon user.is_superuser %}</td>
+                    <td>
+                        {% if current_user.is_superuser %}
+                            <div class="btn-group btn-group-sm pull-right">
+                                <a href="{% url 'change_user_password' pk=user.pk %}" class="btn btn-default" data-toggle="tooltip" title="{% trans 'Set/change password' %}">
+                                    <i class="fa fa-hashtag"></i>
+                                </a>
+                                <a href="{% url 'update_user' pk=user.pk %}" class="btn btn-default" data-toggle="tooltip" title="{% trans 'Edit' %}">
+                                    <i class="fa fa-pencil"></i>
+                                </a>
+                                <a href="{% url 'delete_user' pk=user.pk %}" class="btn btn-default" data-toggle="tooltip" title="{% trans 'Delete' %}">
+                                    <i class="fa fa-trash"></i>
+                                </a>
+                            </div>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="7">{% trans 'No users found.' %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% pagination request page_obj %}
+{% endblock %}

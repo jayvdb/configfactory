@@ -1,0 +1,113 @@
+{% extends 'layouts/main.html' %}
+{% load i18n %}
+
+{% block page_title %}{% trans 'Logs' %}{% endblock %}
+
+{% block content %}
+ <table class="table">
+    <tbody>
+        <tr>
+            <th style="width: 160px">{% trans 'Action' %}</th>
+            <td>{{ log.action }}</td>
+        </tr>
+        <tr>
+            <th style="width: 160px">{% trans 'Action type' %}</th>
+            <td>
+                {% if log.action_type %}
+                    {{ log.get_action_type_display|title }}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans 'Action time' %}</th>
+            <td>{{ log.created_at|date }} {{ object.created_at|time }}</td>
+        </tr>
+        <tr>
+            <th>{% trans 'User' %}</th>
+            <td>
+                {% if log.user %}
+                    <a href="{% url 'update_user' pk=log.user.pk %}">{{ log.user }}</a>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans 'Content type' %}</th>
+            <td>
+                {% if log.content_type %}
+                    {{ log.content_type|capfirst }}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans 'Object' %}</th>
+            <td>
+                {% if log.object_repr %}
+                    {% with log.get_object_url as object_url %}
+                        {% if object_url %}
+                            <a href="{{ object_url }}?next={{ request.path }}">{{ log.object_repr }}</a>
+                        {% else %}
+                            {{ log.object_repr }}
+                        {% endif %}
+                    {% endwith %}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans 'Object id' %}</th>
+            <td>{{ log.object_id|default_if_none:'' }}</td>
+        </tr>
+        {% if log.diff_data %}
+            <tr>
+                <th>{{ _('Difference') }}</th>
+                <td>
+                    <table class="table table-condensed no-border">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>{% trans 'Key' %}</th>
+                                <th>{% trans 'Previous value' %}</th>
+                                <th>{% trans 'Current value' %}</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for action, field, detail in log.diff_data %}
+                            {% if action == 'add' %}
+                                {% for key, value in detail %}
+                                    <tr>
+                                        <td class="text-green"><i class="fa fa-plus-circle"></i></td>
+                                        <td>{% if field %}{{ field }}.{{ key }}{% else %}{{ key }}{% endif %}</td>
+                                        <td></td>
+                                        <td>{{ value }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% elif action == 'change' %}
+                                <tr>
+                                    <td class="text-blue"><i class="fa fa-pencil"></i></td>
+                                    <td>{{ field }}</td>
+                                    <td class="text-muted">
+                                        {{ detail|first }}
+                                    </td>
+                                    <td>
+                                        {{ detail|last }}
+                                    </td>
+                                </tr>
+                            {% elif action == 'remove' %}
+                                {% for key, value in detail %}
+                                    <tr>
+                                        <td class="text-red"><i class="fa fa-minus-circle"></i></td>
+                                        <td>{% if field %}{{ field }}.{{ key }}{% else %}{{ key }}{% endif %}</td>
+                                        <td class="text-muted">{{ value }}</td>
+                                        <td></td>
+                                    </tr>
+                                {% endfor %}
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </td>
+            </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}
