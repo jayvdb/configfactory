@@ -55,42 +55,22 @@ def prepare_component_settings_data(component, environment):
     }
 
 
-def get_component_settings(component, environment):
+def get_component_settings(component: Component, environment: Environment):
     """
     Get component settings.
     """
 
-    if environment.is_base:
-        data = configstore.get_settings(
-            environment=environment.alias,
-            component=component.alias
-        )
-    else:
-        base_settings = configstore.get_settings(
-            environment=get_base_environment_alias(),
-            component=component.alias
-        )
-        env_settings = configstore.get_settings(
-            environment=environment.alias,
-            component=component.alias
-        )
-
-        if environment.fallback_id:
-            fallback_settings = get_component_settings(
-                environment=environment.fallback,
-                component=component
-            )
-            env_settings = dicthelper.merge(
-                fallback_settings,
-                env_settings
-            )
-
-        data = dicthelper.merge(base_settings, env_settings)
-
-    return data
+    return configstore.get_settings(
+        environment=environment,
+        component=component
+    )
 
 
-def update_component_settings(component, environment, settings, skip_validation=False):
+def update_component_settings(component: Component,
+                              environment: Environment,
+                              settings: dict,
+                              skip_validation=False
+                              ) -> Component:
 
     if not skip_validation:
         validate_component_settings(
@@ -100,8 +80,8 @@ def update_component_settings(component, environment, settings, skip_validation=
         )
 
     configstore.update_settings(
-        environment=environment.alias,
-        component=component.alias,
+        environment=environment,
+        component=component,
         settings=settings
     )
 
@@ -226,7 +206,7 @@ def delete_component(component: Component):
     component.delete()
 
     # Delete from config store
-    configstore.delete_settings(component=component)
+    configstore.delete_settings(component)
 
 
 def inject_params(environment, settings, components=None, strict=True):

@@ -1,11 +1,11 @@
 import abc
-from typing import Optional
+from typing import Optional, Dict
 
 
 class ConfigStoreBackend(abc.ABC):
 
     @abc.abstractmethod
-    def all_data(self) -> dict:
+    def all_data(self) -> Dict[str, Dict[str, str]]:
         pass
 
     @abc.abstractmethod
@@ -13,7 +13,7 @@ class ConfigStoreBackend(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def update_data(self, environment: str, component: str, data: dict):
+    def update_data(self, environment: str, component: str, data: str):
         pass
 
     @abc.abstractmethod

@@ -5,7 +5,7 @@ from configfactory.models import Component, Environment
 
 class ConfigFactory(factory.django.DjangoModelFactory):
 
-    settings = {}
+    data = {}
 
     class Meta:
         model = 'configfactory.Config'

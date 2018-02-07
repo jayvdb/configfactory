@@ -20,7 +20,7 @@ def dumps(obj, indent=None, compress=False):
     )
 
 
-def loads(s):
+def loads(s: str):
     if not s:
         return {}
     try:

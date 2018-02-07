@@ -7,7 +7,7 @@ from configfactory.exceptions import (
 from configfactory.models import Config
 from configfactory.services.components import (
     delete_component,
-    get_settings,
+    get_component_settings,
     inject_params,
     update_component_settings,
     validate_component_settings,
@@ -19,10 +19,7 @@ class ComponentsServiceTestCase(TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        cls.base = EnvironmentFactory(
-            name='Base',
-            alias='base'
-        )
+        cls.base = EnvironmentFactory(name='Base', alias='base')
 
     def test_nested_inject_components_data_params(self):
 
@@ -76,10 +73,7 @@ class ComponentsServiceTestCase(TestCase):
             }
         )
 
-        prod_data = get_settings(
-            component=hosts,
-            environment=production,
-        )
+        prod_data = get_component_settings(hosts, environment=production)
 
         prod_data = inject_params(production, prod_data)
 
@@ -99,10 +93,7 @@ class ComponentsServiceTestCase(TestCase):
             }
         )
 
-        base_data = get_settings(
-            component=database,
-            environment=self.base,
-        )
+        base_data = get_component_settings(database, environment=self.base)
 
         base_data = inject_params(self.base, base_data)
 
@@ -114,10 +105,7 @@ class ComponentsServiceTestCase(TestCase):
             'pass': '',
         })
 
-        dev_data = get_settings(
-            component=database,
-            environment=development,
-        )
+        dev_data = get_component_settings(database, environment=development)
 
         dev_data = inject_params(development, dev_data)
 
@@ -129,10 +117,7 @@ class ComponentsServiceTestCase(TestCase):
             'pass': '',
         })
 
-        prod_data = get_settings(
-            component=database,
-            environment=production,
-        )
+        prod_data = get_component_settings(database, environment=production)
 
         prod_data = inject_params(production, prod_data)
 
@@ -151,7 +136,7 @@ class ComponentsServiceTestCase(TestCase):
             alias='database'
         )
 
-        with self.assertRaises(ComponentValidationError) as exc:
+        with self.assertRaises(ComponentValidationError):
 
             validate_component_settings(
                 component=database,

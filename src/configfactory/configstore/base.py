@@ -3,10 +3,10 @@ import threading
 from typing import Dict
 
 from django.conf import settings
+from django.utils.functional import cached_property
 
-from configfactory.models import Environment, Component
-from configfactory.utils import json, tplparams
-from configfactory.utils.security import decrypt_data, encrypt_data
+from configfactory.models import Component, Environment
+from configfactory.utils import json, security, tplparams, dicthelper
 
 from .backends.base import ConfigStoreBackend
 from .backends.database import DatabaseConfigStore
@@ -19,6 +19,8 @@ BACKEND_REGISTRY = {
 
 
 class ConfigStore:
+
+    SECURED_KEYS = ['password', 'token']
 
     def __init__(self, backend):
         self.backend = backend  # type: ConfigStoreBackend
@@ -44,6 +46,10 @@ class ConfigStore:
     def cached(self):
         return hasattr(self._cache, 'cache')
 
+    @cached_property
+    def base_environment(self) -> Environment:
+        return Environment.objects.base().get()
+
     def all_settings(self) -> Dict[str, Dict[str, dict]]:
         """
         Get all settings.
@@ -56,41 +62,68 @@ class ConfigStore:
         for environment, component_data in self.backend.all_data().items():
             all_settings[environment] = {}
             for component, data in component_data.items():
-                settings = json.loads(decrypt_data(data))
-                all_settings[environment][component] = settings
+                all_settings[environment][component] = security.decrypt_dict(
+                    data=json.loads(data),
+                    secured_keys=self.SECURED_KEYS
+                )
         return all_settings
 
-    def env_settings(self, environment):
+    def env_settings(self, environment: Environment) -> dict:
         """
         Get environment settings.
         """
-        all_settings = self.all_settings()
-        return all_settings.get(environment, {})
+        try:
+            return self.all_settings()[environment.alias]
+        except KeyError:
+            return {}
 
-    def get_settings(self, environment, component):
+    def get_settings(self, environment: Environment, component: Component) -> dict:
         """
         Get settings.
         """
 
-        # Return cached settings
-        if self.cached():
-            cache = getattr(self._cache, 'cache')
-            return cache.get(environment, {}).get(component, {})
+        all_settings = self.all_settings()
 
-        data = self.backend.get_data(environment, component)
-        if data is None:
-            return {}
-        return json.loads(decrypt_data(data))
+        if environment.is_base:
+            try:
+                return all_settings[environment.alias][component.alias]
+            except KeyError:
+                return {}
 
-    def update_settings(self, environment: str, component: str, settings: dict):
+        else:
+
+            try:
+                base_settings = all_settings[self.base_environment.alias][component.alias]
+            except KeyError:
+                base_settings = {}
+
+            try:
+                env_settings = all_settings[environment.alias][component.alias]
+            except KeyError:
+                env_settings = {}
+
+            if environment.fallback:
+
+                try:
+                    fallback_settings = all_settings[environment.fallback.alias][component.alias]
+                    env_settings = dicthelper.merge(fallback_settings, env_settings)
+                except KeyError:
+                    pass
+
+            return dicthelper.merge(base_settings, env_settings)
+
+    def update_settings(self, environment: Environment, component: Component, settings: dict):
         """
         Update settings.
         """
-        # Prepare settings string
-        if isinstance(settings, (dict, list)):
-            settings = json.dumps(settings, compress=True)
-        data = encrypt_data(settings)
-        self.backend.update_data(environment, component, data)
+
+        settings = security.encrypt_dict(settings, secured_keys=self.SECURED_KEYS)
+
+        self.backend.update_data(
+            environment=environment.alias,
+            component=component.alias,
+            data=json.dumps(settings, compress=True)
+        )
 
     def delete_settings(self, component: Component):
         """

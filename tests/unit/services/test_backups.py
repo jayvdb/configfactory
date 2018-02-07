@@ -3,7 +3,7 @@ from django.test import TestCase
 from configfactory.models import Component, Config, Environment
 from configfactory.services.backups import create_backup, load_backup
 from configfactory.services.components import (
-    get_settings,
+    get_component_settings,
     update_component_settings,
 )
 from configfactory.test.factories import ComponentFactory, EnvironmentFactory
@@ -87,10 +87,7 @@ class BackupsServiceTestCase(TestCase):
         assert Component.objects.filter(alias='hosts').exists()
         assert Component.objects.filter(alias='database').exists()
 
-        base_hosts_data = get_settings(
-            component=hosts,
-            environment=base
-        )
+        base_hosts_data = get_component_settings(hosts, environment=base)
 
         assert base_hosts_data == {
             'a': '1',
@@ -98,10 +95,7 @@ class BackupsServiceTestCase(TestCase):
             'c': '3',
         }
 
-        development_hosts_data = get_settings(
-            component=hosts,
-            environment=development
-        )
+        development_hosts_data = get_component_settings(hosts, environment=development)
 
         assert development_hosts_data == {
             'a': '1!',
@@ -109,10 +103,7 @@ class BackupsServiceTestCase(TestCase):
             'c': '3!',
         }
 
-        base_database_data = get_settings(
-            component=database,
-            environment=base
-        )
+        base_database_data = get_component_settings(database, environment=base)
 
         assert base_database_data == {
             'user': 'root',
@@ -120,10 +111,7 @@ class BackupsServiceTestCase(TestCase):
             'host': 'mysql-base',
         }
 
-        development_database_data = get_settings(
-            component=database,
-            environment=development
-        )
+        development_database_data = get_component_settings(database, environment=development)
 
         assert development_database_data == {
             'user': 'admin',

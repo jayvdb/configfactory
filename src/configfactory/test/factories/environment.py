@@ -7,7 +7,7 @@ class EnvironmentFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = 'configfactory.Environment'
-        django_get_or_create = ('name', )
+        django_get_or_create = ('alias', )
 
     @factory.lazy_attribute
     def alias(self):

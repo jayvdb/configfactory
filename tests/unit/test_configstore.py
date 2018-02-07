@@ -3,7 +3,6 @@ from django.test import TestCase, override_settings
 
 from configfactory import configstore
 from configfactory.test.factories import ComponentFactory, EnvironmentFactory
-from configfactory.test.factories.config import ConfigFactory
 
 
 @override_settings(BASE_ENVIRONMENT='base')
@@ -28,12 +27,12 @@ class ConfigStoreTestCase(TestCase):
 
     def test_all_settings(self):
 
-        ConfigFactory(environment=self.base, component=self.db, settings={
+        configstore.update_settings(self.base, self.db, settings={
             'user': 'root',
             'pass': ''
         })
 
-        ConfigFactory(environment=self.dev, component=self.db, settings={
+        configstore.update_settings(self.dev, self.db, settings={
             'user': 'devuser',
             'pass': '123123'
         })
@@ -55,12 +54,12 @@ class ConfigStoreTestCase(TestCase):
 
     def test_all_settings_cached(self):
 
-        ConfigFactory(environment=self.base, component=self.db, settings={
+        configstore.update_settings(self.base, self.db, settings={
             'user': 'user',
             'pass': 'secret'
         })
 
-        ConfigFactory(environment=self.base, component=self.redis, settings={
+        configstore.update_settings(self.base, self.redis, settings={
             'url': 'redis://',
         })
 

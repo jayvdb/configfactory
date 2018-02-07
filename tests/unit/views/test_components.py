@@ -3,7 +3,7 @@ from collections import OrderedDict
 from django.test import TestCase
 
 from configfactory.models import Component
-from configfactory.services.components import get_settings
+from configfactory.services.components import get_component_settings
 from configfactory.test.factories import (
     ComponentFactory,
     EnvironmentFactory,
@@ -19,7 +19,7 @@ class ComponentsViewsTestCase(TestCase):
 
         response = self.client.get('/components/create/')
 
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         response = self.client.post('/components/create/', data={
             'name': 'Database',
@@ -31,20 +31,20 @@ class ComponentsViewsTestCase(TestCase):
 
         self.assertRedirects(response, '/components/database/', target_status_code=302)
 
-        self.assertTrue(Component.objects.filter(alias='database').exists())
+        assert Component.objects.filter(alias='database').exists()
 
     def test_update_component(self):
 
         component = ComponentFactory(name='Database', alias='database')
         development = EnvironmentFactory(name='Development', alias='development')
 
-        self.assertTrue(Component.objects.filter(alias='database').exists())
+        assert Component.objects.filter(alias='database').exists()
 
         self.client.force_login(UserFactory(is_superuser=True))
 
         response = self.client.get('/components/database/base/edit/')
 
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         response = self.client.post('/components/database/base/edit/', data={
             'settings': """
@@ -59,17 +59,11 @@ class ComponentsViewsTestCase(TestCase):
 
         self.assertRedirects(response, '/components/database/base/edit/')
 
-        settings_dict = get_settings(
-            component=component,
-            environment=development
-        )
+        settings_dict = get_component_settings(component, environment=development)
 
-        self.assertDictEqual(
-            settings_dict,
-            OrderedDict([
-                ('host', 'localhost'),
-                ('port', 3567),
-                ('user', 'root'),
-                ('password', None),
-            ])
-        )
+        assert settings_dict == {
+            'host': 'localhost',
+            'port': 3567,
+            'user': 'root',
+            'password': None,
+        }
