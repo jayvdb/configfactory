@@ -9,7 +9,7 @@ from configfactory.mixins import ConfigStoreCachedMixin
 from configfactory.models import Component, Environment
 from configfactory.services.components import (
     get_component_settings,
-    get_settings,
+    get_environment_settings,
     inject_params,
 )
 from configfactory.utils import dicthelper
@@ -42,7 +42,7 @@ class ComponentsAPIView(ConfigStoreCachedMixin, View):
 
         components = list(Component.objects.all())
 
-        data = get_settings(environment, components=components)
+        data = get_environment_settings(environment, components=components)
 
         if flatten:
             data = dicthelper.flatten(data)

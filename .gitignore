@@ -18,7 +18,7 @@ ideadb
 exception.log
 __pycache__
 .env
-configfactory.yml
+configfactory.ini
 
 # Unit test / coverage reports
 .coverage

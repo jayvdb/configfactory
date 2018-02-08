@@ -1,4 +1,4 @@
-from django.conf.urls import url
+from django.urls import path
 
 from configfactory.api.views import (
     ComponentsAPIView,
@@ -8,15 +8,15 @@ from configfactory.api.views import (
 
 urlpatterns = [
 
-    url(r'^$',
-        view=EnvironmentsAPIView.as_view(),
-        name='api_environments'),
+    path('',
+         view=EnvironmentsAPIView.as_view(),
+         name='api_environments'),
 
-    url(r'^(?P<environment>\w+)/$',
-        view=ComponentsAPIView.as_view(),
-        name='api_components'),
+    path('<environment>/',
+         view=ComponentsAPIView.as_view(),
+         name='api_components'),
 
-    url(r'^(?P<environment>\w+)/(?P<alias>[-\w\d]+)/$',
-        view=ComponentSettingsAPIView.as_view(),
-        name='api_component_settings'),
+    path('<environment>/<alias>/',
+         view=ComponentSettingsAPIView.as_view(),
+         name='api_component_settings'),
 ]

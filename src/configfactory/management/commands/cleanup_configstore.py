@@ -10,7 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        for environment, components_data in configstore.all_settings().items():
+        for environment, components_data in configstore.all().items():
             for component, settings in components_data.items():
                 if not Environment.objects.filter(alias=environment).exists():
                     configstore.backend.delete_data(

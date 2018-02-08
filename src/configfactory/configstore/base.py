@@ -24,26 +24,22 @@ class ConfigStore:
 
     encrypt_enabled = settings.ENCRYPT_ENABLED
 
-    backend = settings.CONFIGSTORE_BACKEND
-
-    options = settings.CONFIGSTORE_OPTIONS
-
     def __init__(self, backend: ConfigStoreBackend):
         self.backend = backend
         self._cache = threading.local()
 
     @classmethod
     def configure(cls) -> 'ConfigStore':
-        backend_class = cls.backend_registry[cls.backend]
-        if cls.options:
-            backend = backend_class(**cls.options)
+        backend_class = cls.backend_registry[settings.CONFIGSTORE_BACKEND]
+        if settings.CONFIGSTORE_OPTIONS:
+            backend = backend_class(**settings.CONFIGSTORE_OPTIONS)
         else:
             backend = backend_class()
         return ConfigStore(backend)
 
     @contextlib.contextmanager
     def cachecontext(self):
-        setattr(self._cache, 'cache', self.all_settings())
+        setattr(self._cache, 'cache', self.all())
         yield self
         delattr(self._cache, 'cache')
 
@@ -54,7 +50,7 @@ class ConfigStore:
     def base_environment(self) -> Environment:
         return Environment.objects.base().get()
 
-    def all_settings(self) -> Dict[str, Dict[str, dict]]:
+    def all(self) -> Dict[str, Dict[str, dict]]:
         """
         Get all settings.
         """
@@ -68,25 +64,25 @@ class ConfigStore:
             for component, data in component_data.items():
                 all_settings[environment][component] = security.decrypt_dict(
                     data=json.loads(data),
-                    secured_keys=self.secured_keys
+                    secured_keys=settings.SECURED_KEYS
                 )
         return all_settings
 
-    def env_settings(self, environment: Environment) -> dict:
+    def env(self, environment: Environment) -> dict:
         """
         Get environment settings.
         """
         try:
-            return self.all_settings()[environment.alias]
+            return self.all()[environment.alias]
         except KeyError:
             return {}
 
-    def get_settings(self, environment: Environment, component: Component) -> dict:
+    def get(self, environment: Environment, component: Component) -> dict:
         """
         Get settings.
         """
 
-        all_settings = self.all_settings()
+        all_settings = self.all()
 
         if environment.is_base:
             try:
@@ -116,41 +112,41 @@ class ConfigStore:
 
             return dicthelper.merge(base_settings, env_settings)
 
-    def update_settings(self, environment: Environment, component: Component, settings: dict):
+    def update(self, environment: Environment, component: Component, data: dict):
         """
         Update settings.
         """
 
-        if not isinstance(settings, dict):
+        if not isinstance(data, dict):
             raise TypeError("`settings` must be dict type.")
 
         if self.encrypt_enabled:
-            settings = security.encrypt_dict(settings, secured_keys=self.secured_keys)
+            data = security.encrypt_dict(data, secured_keys=settings.SECURED_KEYS)
 
         self.backend.update_data(
             environment=environment.alias,
             component=component.alias,
-            data=json.dumps(settings, compress=True)
+            data=json.dumps(data, compress=True)
         )
 
-    def delete_settings(self, component: Component):
+    def delete(self, component: Component):
         """
         Delete component settings.
         """
-        environments = self.all_settings().keys()
+        environments = self.all().keys()
         for environment in environments:
             self.backend.delete_data(
                 environment=environment,
                 component=component.alias
             )
 
-    def inject_keys(self, environment: Environment, component: Component = None, settings: dict = None):
+    def ikeys(self, environment: Environment, component: Component = None, settings: dict = None):
         """
         Get components inject keys.
         """
 
         keys = {}
-        env_settings = self.env_settings(environment)
+        env_settings = self.env(environment)
 
         # Update with changed component settings
         if component:

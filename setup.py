@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.join(root_path, 'src'))
 version = __import__('configfactory').__version__
 
 requires = [
-    'django==1.11.10',
+    'django==2.0.2',
     'django-filter==1.1.0',
     'django-guardian==1.4.9',
     'django-crispy-forms==1.7.0',
@@ -30,8 +30,8 @@ requires = [
     'apscheduler==3.4.0',
     'packaging==16.8',
     'appdirs==1.4.3',
-    'arrow==0.12',
-    'colorlog==3.1.0',
+    'arrow==0.12.1',
+    'colorlog==3.1.2',
     'dictdiffer==0.7',
     'faker==0.8.10',
     'factory-boy==2.9.2'

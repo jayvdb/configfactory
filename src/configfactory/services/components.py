@@ -1,4 +1,4 @@
-from collections import OrderedDict
+from typing import Iterable
 
 import dictdiffer
 import jsonschema
@@ -12,7 +12,6 @@ from configfactory.exceptions import (
     InjectKeyError,
 )
 from configfactory.models import Component, Environment
-from configfactory.shortcuts import get_base_environment_alias
 from configfactory.utils import dicthelper, tplparams
 
 
@@ -27,24 +26,18 @@ def get_user_components(user):
     )
 
 
-def get_settings(environment, components=None):
+def get_environment_settings(environment: Environment, components: Iterable[Component] = None) -> dict:
 
     if components is None:
         components = Component.objects.all()
 
-    return OrderedDict([
-        (
-            component.alias,
-            get_component_settings(
-                component=component,
-                environment=environment,
-            )
-        )
+    return {
+        component.alias: get_component_settings(component, environment=environment)
         for component in components
-    ])
+    }
 
 
-def prepare_component_settings_data(component, environment):
+def prepare_component_settings_data(component: Component, environment: Environment):
     return {
         'settings': {
             environment.alias: configstore.backend.get_data(
@@ -60,7 +53,7 @@ def get_component_settings(component: Component, environment: Environment):
     Get component settings.
     """
 
-    return configstore.get_settings(
+    return configstore.get(
         environment=environment,
         component=component
     )
@@ -79,10 +72,10 @@ def update_component_settings(component: Component,
             settings=settings,
         )
 
-    configstore.update_settings(
+    configstore.update(
         environment=environment,
         component=component,
-        settings=settings
+        data=settings
     )
 
     return component
@@ -98,7 +91,7 @@ def validate_component_settings(component: Component, environment: Environment, 
         {component.alias: settings}
     ).keys())
 
-    components_keys = configstore.inject_keys(
+    components_keys = configstore.ikeys(
         environment=environment,
         component=component,
         settings=settings
@@ -186,7 +179,7 @@ def delete_component(component: Component):
 
     for environment in Environment.objects.all():
 
-        inject_keys = configstore.inject_keys(environment)
+        inject_keys = configstore.ikeys(environment)
 
         for component_alias, keys in inject_keys.items():
 
@@ -206,7 +199,7 @@ def delete_component(component: Component):
     component.delete()
 
     # Delete from config store
-    configstore.delete_settings(component)
+    configstore.delete(component)
 
 
 def inject_params(environment, settings, components=None, strict=True):
@@ -215,7 +208,7 @@ def inject_params(environment, settings, components=None, strict=True):
         components = Component.objects.all()
 
     # Get filtered environment settings
-    params = dicthelper.flatten(get_settings(environment, components=components))
+    params = dicthelper.flatten(get_environment_settings(environment, components=components))
 
     return tplparams.inject(
         data=settings,
