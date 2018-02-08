@@ -13,10 +13,7 @@ from configfactory.utils.security import decrypt_data
 
 class LogEntry(models.Model):
 
-    action = models.CharField(
-        max_length=255,
-        verbose_name=_('action')
-    )
+    action = models.CharField(max_length=255, verbose_name=_('action'))
 
     action_type = models.CharField(
         max_length=128,
@@ -27,51 +24,21 @@ class LogEntry(models.Model):
         verbose_name=_('action type')
     )
 
-    user = models.ForeignKey(
-        to='configfactory.User',
-        on_delete=models.SET_NULL,
-        blank=True,
-        null=True,
-        verbose_name=_('user'),
-    )
+    user = models.ForeignKey('configfactory.User', on_delete=models.SET_NULL,
+                             blank=True, null=True, verbose_name=_('user'))
 
-    content_type = models.ForeignKey(
-        to=ContentType,
-        on_delete=models.SET_NULL,
-        verbose_name=_('content type'),
-        blank=True,
-        null=True,
-    )
+    content_type = models.ForeignKey(ContentType, on_delete=models.SET_NULL,
+                                     blank=True, null=True, verbose_name=_('content type'))
 
-    object_id = models.IntegerField(
-        blank=True,
-        null=True,
-        verbose_name=_('object id'),
-    )
+    object_id = models.IntegerField(blank=True, null=True, verbose_name=_('object id'),)
 
-    object_repr = models.CharField(
-        max_length=128,
-        blank=True,
-        null=True,
-        verbose_name=_('object repr')
-    )
+    object_repr = models.CharField(max_length=128, blank=True, null=True, verbose_name=_('object repr'))
 
-    old_data_json = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name=_('old data')
-    )
+    old_data_json = models.TextField(blank=True, null=True, verbose_name=_('old data'))
 
-    new_data_json = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name=_('new data')
-    )
+    new_data_json = models.TextField(blank=True, null=True, verbose_name=_('new data'))
 
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_('action time'),
-    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name=_('action time'))
 
     class Meta:
         ordering = ('-created_at',)

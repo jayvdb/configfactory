@@ -1,5 +1,3 @@
-import json
-
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
@@ -16,6 +14,7 @@ from configfactory.forms.backup import BackupImportForm
 from configfactory.mixins import SuperuserRequiredMixin
 from configfactory.models import Backup
 from configfactory.services.backups import create_backup, load_backup
+from configfactory.utils import json
 
 
 class BackupListView(LoginRequiredMixin, ListView):

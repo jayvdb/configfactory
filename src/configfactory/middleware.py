@@ -1,10 +1,10 @@
-import json
 import logging
 
 from django.utils.functional import SimpleLazyObject
 
 from configfactory.services.components import get_user_components
 from configfactory.services.environments import get_user_environments
+from configfactory.utils import json
 from configfactory.utils.http import get_client_ip
 
 logger = logging.getLogger(__name__)

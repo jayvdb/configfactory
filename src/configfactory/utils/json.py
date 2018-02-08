@@ -1,5 +1,4 @@
 import json
-from collections import OrderedDict
 
 from django.core.serializers.json import DjangoJSONEncoder
 
@@ -24,8 +23,6 @@ def loads(s: str):
     if not s:
         return {}
     try:
-        return json.loads(s, object_pairs_hook=OrderedDict)
-    except Exception as e:
-        raise JSONLoadError(
-            'Invalid JSON: {}.'.format(e)
-        )
+        return json.loads(s)
+    except Exception as exc:
+        raise JSONLoadError(f'Invalid JSON: {exc}.')
