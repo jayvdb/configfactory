@@ -1,5 +1,3 @@
-from collections import OrderedDict
-
 from django.test import TestCase
 
 from configfactory.models import Component
