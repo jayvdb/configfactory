@@ -12,7 +12,7 @@ from configfactory.support.logging import debug_logging
 ###########################################
 DEBUG = appenv.debug_enabled()
 
-SECRET_KEY = '28$0ld^(u&7o%f_e4sqh@rl&lere4kzsca#@&6@f+#5k7r963b'
+SECRET_KEY = config.get('secret_key', default='28$0ld^(u&7o%f_e4sqh@rl&lere4kzsca#@&6@f+#5k7r963b')
 
 ROOT_URLCONF = 'configfactory.urls'
 
@@ -207,62 +207,6 @@ CACHES = {
 }
 
 ###########################################
-# Security settings
-###########################################
-ENCRYPT_ENABLED = config.get('encrypt_enabled', False)
-
-ENCRYPT_KEY = SECRET_KEY
-
-# Check encrypt key length
-if ENCRYPT_ENABLED:
-    if not ENCRYPT_KEY or len(ENCRYPT_KEY) < 32:
-        raise ImproperlyConfigured(
-            'Encrypt key must set and greater '
-            'or equal to 32 symbols.'
-        )
-
-ENCRYPT_PREFIX = '$$$enc$$$:'
-
-CLEANSED_HIDDEN = config.get(
-    'cleansed.hidden',
-    default='api token key secret pass password signature'
-)
-
-CLEANSED_SUBSTITUTE = config.get(
-    'cleansed.substitute',
-    default='***************'
-)
-
-######################################
-# Environments settings
-######################################
-DEFAULT_ENVIRONMENTS = [
-    {
-        'name': 'Development',
-        'alias': 'development'
-    }
-]
-
-BASE_ENVIRONMENT = 'base'
-
-###########################################
-# Config store settings
-###########################################
-CONFIG_STORE = {
-    'backend': config.get('config_store.backend', default='database'),
-    'options': config.get('config_store.options')
-}
-
-###########################################
-# Backups settings
-###########################################
-BACKUPS_INTERVAL = config.get('backup.interval', default=7200)  # Every 2 hours
-
-BACKUPS_CLEAN_INTERVAL = config.get('backup.clean_interval', default=21600)  # Every 6 hours
-
-BACKUPS_CLEAN_THRESHOLD = config.get('backup.clean_threshold', default=168)  # Every week
-
-###########################################
 # Auth / users settings
 ###########################################
 DEFAULT_USERS = [
@@ -309,3 +253,42 @@ LOGIN_REDIRECT_URL = 'dashboard'
 # Crispy forms settings
 ###########################################
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
+
+###########################################
+# ConfigFactory settings
+###########################################
+DEFAULT_ENVIRONMENTS = [
+    {
+        'name': 'Development',
+        'alias': 'development'
+    }
+]
+
+BASE_ENVIRONMENT = 'base'
+
+# Data encryption
+ENCRYPT_ENABLED = config.get('encrypt.enabled', default=False)
+
+ENCRYPT_TOKEN = config.get('encrypt.token', default=SECRET_KEY)
+
+ENCRYPT_PREFIX = '$$$enc$$$:'
+
+# Check encrypt key length
+if ENCRYPT_ENABLED:
+    if not ENCRYPT_TOKEN or len(ENCRYPT_TOKEN) < 32:
+        raise ImproperlyConfigured('Encrypt key must set and greater or equal to 32 symbols.')
+
+# Secured keys
+SECURED_KEYS = config.getlist('secured_keys', default=['pass', 'password'])
+
+# ConfigStore settings
+CONFIGSTORE_BACKEND = config.get('configstore.backend', default='database')
+
+CONFIGSTORE_OPTIONS = config.getdict('configstore.options', default={})
+
+# Backups settings
+BACKUPS_INTERVAL = config.getint('backup.interval', default=7200)  # Every 2 hours
+
+BACKUPS_CLEAN_INTERVAL = config.getint('backup.clean_interval', default=21600)  # Every 6 hours
+
+BACKUPS_CLEAN_THRESHOLD = config.getint('backup.clean_threshold', default=168)  # Every week

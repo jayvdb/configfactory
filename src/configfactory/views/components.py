@@ -296,8 +296,7 @@ class ComponentSettingsView(LoginRequiredMixin,
                 component=component,
                 environment=environment,
             ),
-            hidden=settings.CLEANSED_HIDDEN,
-            substitute=settings.CLEANSED_SUBSTITUTE
+            hidden=settings.SECURED_KEYS,
         )
 
         settings_dict = dicthelper.flatten(settings_dict)

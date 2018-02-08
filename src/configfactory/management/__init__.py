@@ -4,11 +4,8 @@ from django.contrib.auth import get_user_model
 from django.db import DEFAULT_DB_ALIAS, router
 
 
-def create_environments(app_config,
-                        verbosity=2,
-                        using=DEFAULT_DB_ALIAS,
-                        apps=global_apps,
-                        **kwargs):
+def create_default_environments(app_config, verbosity=2, using=DEFAULT_DB_ALIAS, apps=global_apps, **kwargs):
+
     try:
         Environment = apps.get_model('configfactory', 'Environment')
     except LookupError:
@@ -30,7 +27,7 @@ def create_environments(app_config,
         try:
             environment = Environment.objects.using(using).get(alias=alias)
             if verbosity >= 2:
-                print("Updating {alias} environment.".format(alias=alias))
+                print(f"Updating {alias} environment.")
             environment.name = name
             environment.order = order
             environment.is_active = True
@@ -38,7 +35,7 @@ def create_environments(app_config,
         except Environment.DoesNotExist:
             environment = Environment(alias=alias, name=name, order=order)
             if verbosity >= 2:
-                print("Creating {alias} environment.".format(alias=alias))
+                print(f"Creating {alias} environment.")
             environment.save(using=using)
 
     # Deactivate old environment
@@ -47,7 +44,7 @@ def create_environments(app_config,
         aliases.add(alias)
         if alias not in aliases and alias != settings.BASE_ENVIRONMENT:
             if verbosity >= 2:
-                print("Deactivating {alias} environment.".format(alias=alias))
+                print(f"Deactivating {alias} environment.")
             environment.is_active = False
             environment.save(using=using)
 
@@ -61,11 +58,7 @@ def create_environments(app_config,
                 alias=fallback
             ).first()
             if verbosity >= 2:
-                print(
-                    "Setting {alias} fallback environment.".format(
-                        alias=environment.alias
-                    )
-                )
+                print(f"Setting {environment.alias} fallback environment.")
             environment.fallback = fallback_environment
             environment.save(using=using)
         except Environment.DoesNotExist:
@@ -85,11 +78,8 @@ def create_environments(app_config,
         environment.save(using=using)
 
 
-def create_default_users(app_config,
-                         verbosity=2,
-                         using=DEFAULT_DB_ALIAS,
-                         apps=global_apps,
-                         **kwargs):
+def create_default_users(app_config, verbosity=2, using=DEFAULT_DB_ALIAS, apps=global_apps, **kwargs):
+
     try:
         User = get_user_model()
     except LookupError:
@@ -106,12 +96,12 @@ def create_default_users(app_config,
         if not User.objects.using(using).filter(username=username).exists():
 
             if verbosity >= 2:
-                print("Create default user {username}.".format(username=username))
+                print(f"Create default user {username}.")
 
             User.objects.create_user(
                 username=username,
                 password=password,
-                email='{username}@mail.com'.format(username=username),
+                email=f'{username}@mail.com',
                 is_staff=is_superuser,
                 is_superuser=is_superuser,
             )

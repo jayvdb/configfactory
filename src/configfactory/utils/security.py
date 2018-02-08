@@ -72,7 +72,7 @@ class DataEncryptor:
         if not settings.ENCRYPT_ENABLED:
             return DummyDataEncryptor()
         else:
-            return FernetDataEncryptor(settings.ENCRYPT_KEY)
+            return FernetDataEncryptor(settings.ENCRYPT_TOKEN)
 
     def encrypt(self, data: str) -> str:
         return self._encryptor.encrypt(data.encode()).decode()
@@ -104,10 +104,7 @@ def encrypt_dict(data: dict, secured_keys: List[str]) -> dict:
                 encrypted_data = encrypt_data(json.dumps({
                     'value': value
                 }))
-                return '{prefix}{data}'.format(
-                    prefix=settings.ENCRYPT_PREFIX,
-                    data=encrypted_data
-                )
+                return f'{settings.ENCRYPT_PREFIX}{encrypted_data}'
 
         return value
 

@@ -1,6 +1,6 @@
 from configfactory.configstore.base import ConfigStore
 
-from .base import BACKEND_REGISTRY, ConfigStore
+from .base import ConfigStore
 
 # Set default config store
 instance = ConfigStore.configure()

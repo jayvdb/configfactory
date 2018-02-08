@@ -30,7 +30,6 @@ requires = [
     'apscheduler==3.4.0',
     'packaging==16.8',
     'appdirs==1.4.3',
-    'pyyaml==3.12',
     'arrow==0.12',
     'colorlog==3.1.0',
     'dictdiffer==0.7',
@@ -56,7 +55,7 @@ setup(
     zip_safe=False,
     install_requires=requires,
     extras_require={
-        'testing': [
+        'dev': [
             'pytest',
             'pytest-cov',
             'pytest-django',

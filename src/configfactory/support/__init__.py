@@ -1,3 +1,3 @@
 from .config import Config, ConfigHandler
 
-config = ConfigHandler()  # type: Config
+config: Config = ConfigHandler()

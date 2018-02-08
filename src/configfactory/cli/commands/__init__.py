@@ -2,6 +2,7 @@ from multiprocessing import Process, cpu_count
 
 import click
 import django
+from configfactory.support import config
 from django.core.management import call_command, execute_from_command_line
 
 
@@ -23,7 +24,7 @@ def init_command():
     '--bind', '-b',
     help='A string of the form: HOST, HOST:PORT, '
          'unix:PATH. An IP is a valid HOST.',
-    default=['127.0.0.1:8000'],
+    default=config.getlist('server.bind', default=['127.0.0.1:8080']),
     multiple=True
 )
 @click.option(

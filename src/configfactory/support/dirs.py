@@ -20,9 +20,7 @@ def package_dir(target=None):
     Return configfactory package directory.
     """
     root = os.path.dirname(
-        os.path.dirname(
-            os.path.dirname(__file__)
-        )
+        os.path.dirname(__file__)
     )
     return target_dir(root, target)
 

@@ -54,10 +54,8 @@ class BackupLoadView(SuperuserRequiredMixin, DetailView):
 
         load_backup(backup)
 
-        messages.success(
-            request,
-            _('Backup `%s` successfully loaded.') % backup
-        )
+        messages.success(request, _('Backup `%s` successfully loaded.') % backup)
+
         return redirect(to=reverse('backups'))
 
 
@@ -69,9 +67,9 @@ class BackupExportView(SuperuserRequiredMixin, View):
         filename = '{name}.json'.format(name=slugify(backup))
 
         data = json.dumps({
-            'environment_data': backup.environments_data,
-            'components_data': backup.components_data,
-            'configs_data': backup.configs_data,
+            'environments': backup.environments_data,
+            'components': backup.components_data,
+            'configs': backup.configs_data,
         }, indent=4)
 
         response = HttpResponse(data, content_type='application/json')
@@ -101,9 +99,9 @@ class BackupImportView(SuperuserRequiredMixin,
         data = json.loads(import_file.file.read().decode())
 
         backup = Backup()
-        backup.environments_data = data['environment_data']
-        backup.components_data = data['components_data']
-        backup.configs_data = data['configs_data']
+        backup.environments_data = data['environments']
+        backup.components_data = data['components']
+        backup.configs_data = data['configs']
         backup.user = self.request.user
         backup.comment = import_file.name
         backup.save()

@@ -12,27 +12,31 @@ from .backends.base import ConfigStoreBackend
 from .backends.database import DatabaseConfigStore
 from .backends.memory import MemoryConfigStore
 
-BACKEND_REGISTRY = {
-    'memory': MemoryConfigStore,
-    'database': DatabaseConfigStore
-}
-
 
 class ConfigStore:
 
-    SECURED_KEYS = ['password', 'token']
+    backend_registry = {
+        'memory': MemoryConfigStore,
+        'database': DatabaseConfigStore
+    }
 
-    def __init__(self, backend):
-        self.backend = backend  # type: ConfigStoreBackend
+    secured_keys = settings.SECURED_KEYS
+
+    encrypt_enabled = settings.ENCRYPT_ENABLED
+
+    backend = settings.CONFIGSTORE_BACKEND
+
+    options = settings.CONFIGSTORE_OPTIONS
+
+    def __init__(self, backend: ConfigStoreBackend):
+        self.backend = backend
         self._cache = threading.local()
 
     @classmethod
     def configure(cls) -> 'ConfigStore':
-        backend_type = settings.CONFIG_STORE['backend']
-        backend_class = BACKEND_REGISTRY[backend_type]
-        backend_options = settings.CONFIG_STORE.get('options', {})
-        if backend_options:
-            backend = backend_class(**backend_options)
+        backend_class = cls.backend_registry[cls.backend]
+        if cls.options:
+            backend = backend_class(**cls.options)
         else:
             backend = backend_class()
         return ConfigStore(backend)
@@ -64,7 +68,7 @@ class ConfigStore:
             for component, data in component_data.items():
                 all_settings[environment][component] = security.decrypt_dict(
                     data=json.loads(data),
-                    secured_keys=self.SECURED_KEYS
+                    secured_keys=self.secured_keys
                 )
         return all_settings
 
@@ -120,7 +124,8 @@ class ConfigStore:
         if not isinstance(settings, dict):
             raise TypeError("`settings` must be dict type.")
 
-        settings = security.encrypt_dict(settings, secured_keys=self.SECURED_KEYS)
+        if self.encrypt_enabled:
+            settings = security.encrypt_dict(settings, secured_keys=self.secured_keys)
 
         self.backend.update_data(
             environment=environment.alias,
