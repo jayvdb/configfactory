@@ -1,19 +1,19 @@
 import copy
-from collections import OrderedDict
+from typing import Callable, List, T
 
 
-def flatten(d, parent_key='', sep='.'):
+def flatten(d: dict, parent_key='', sep='.') -> dict:
     """
     Flatten dictionary keys.
     """
-    items = []
+    ret = {}
     for key, value in d.items():
         new_key = sep.join([parent_key, key]) if parent_key else key
         if isinstance(value, dict):
-            items.extend(flatten(value, new_key, sep=sep).items())
+            ret.update(flatten(value, new_key, sep=sep))
         else:
-            items.append((new_key, value))
-    return OrderedDict(items)
+            ret[new_key] = value
+    return ret
 
 
 def merge(d1, d2):
@@ -33,7 +33,7 @@ def merge(d1, d2):
     return ret
 
 
-def traverse(obj, callback=None, path=None):
+def traverse(obj: T, callback: Callable[[T, List[str]], T] = None, path: List[str] = None) -> T:
     """
     Traverse through nested dictionary.
     """
@@ -42,10 +42,10 @@ def traverse(obj, callback=None, path=None):
         path = []
 
     if isinstance(obj, dict):
-        value = OrderedDict([
-            (key, traverse(value, callback, path + [key]))
+        value = {
+            key: traverse(value, callback, path + [key])
             for key, value in obj.items()
-        ])
+        }
     elif isinstance(obj, list):
         value = [
             traverse(elem, callback, path + [])
