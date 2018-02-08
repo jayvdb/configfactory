@@ -13,65 +13,35 @@ class BackupsServiceTestCase(TestCase):
 
     def test_create_and_load_backup(self):
 
-        base = EnvironmentFactory(
-            name='Base',
-            alias='base'
-        )
+        base = EnvironmentFactory(name='Base', alias='base')
+        development = EnvironmentFactory(name='Development', alias='development')
 
-        development = EnvironmentFactory(
-            name='Development',
-            alias='development'
-        )
+        hosts = ComponentFactory(name='Hosts', alias='hosts')
+        database = ComponentFactory(name='Database', alias='database')
 
-        hosts = ComponentFactory(
-            name='Hosts',
-            alias='hosts'
-        )
+        update_component_settings(hosts, environment=base, settings={
+            'a': '1',
+            'b': '2',
+            'c': '3',
+        })
 
-        database = ComponentFactory(
-            name='Database',
-            alias='database'
-        )
+        update_component_settings(hosts, environment=development, settings={
+            'a': '1!',
+            'b': '2!',
+            'c': '3!',
+        })
 
-        update_component_settings(
-            component=hosts,
-            environment=base,
-            settings={
-                'a': '1',
-                'b': '2',
-                'c': '3',
-            }
-        )
+        update_component_settings(database, environment=base, settings={
+            'user': 'root',
+            'pass': '',
+            'host': 'mysql-base',
+        })
 
-        update_component_settings(
-            component=hosts,
-            environment=development,
-            settings={
-                'a': '1!',
-                'b': '2!',
-                'c': '3!',
-            }
-        )
-
-        update_component_settings(
-            component=database,
-            environment=base,
-            settings={
-                'user': 'root',
-                'pass': '',
-                'host': 'mysql-base',
-            }
-        )
-
-        update_component_settings(
-            component=database,
-            environment=development,
-            settings={
-                'user': 'admin',
-                'pass': '123123',
-                'host': 'mysql-dev',
-            }
-        )
+        update_component_settings(database, environment=development, settings={
+            'user': 'admin',
+            'pass': '123123',
+            'host': 'mysql-dev',
+        })
 
         backup = create_backup(comment='Test')
 

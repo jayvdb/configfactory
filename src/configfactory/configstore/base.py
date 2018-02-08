@@ -117,6 +117,9 @@ class ConfigStore:
         Update settings.
         """
 
+        if not isinstance(settings, dict):
+            raise TypeError("`settings` must be dict type.")
+
         settings = security.encrypt_dict(settings, secured_keys=self.SECURED_KEYS)
 
         self.backend.update_data(
@@ -153,8 +156,8 @@ class ConfigStore:
         for component, data in env_settings.items():
             for match in tplparams.param_re.findall(json.dumps(data, compress=True)):
                 if component not in keys:
-                    keys[component] = []
+                    keys[component] = set()
                 key = match[1]
                 if key not in keys[component]:
-                    keys[component].append(key)
+                    keys[component].add(key)
         return keys
