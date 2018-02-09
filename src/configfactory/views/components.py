@@ -42,9 +42,7 @@ from configfactory.utils.db import model_to_dict
 from configfactory.utils.security import cleanse
 
 
-class ComponentCreateView(LoginRequiredMixin,
-                          ConfigStoreCachedMixin,
-                          CreateView):
+class ComponentCreateView(LoginRequiredMixin, ConfigStoreCachedMixin, CreateView):
 
     template_name = 'components/create.html'
 
@@ -82,9 +80,7 @@ class ComponentCreateView(LoginRequiredMixin,
         return response
 
 
-class ComponentUpdateView(LoginRequiredMixin,
-                          ConfigStoreCachedMixin,
-                          UpdateView):
+class ComponentUpdateView(LoginRequiredMixin, ConfigStoreCachedMixin, UpdateView):
 
     template_name = 'components/update.html'
 
@@ -202,9 +198,7 @@ class ComponentSchemaUpdateView(LoginRequiredMixin, UpdateView):
         return super().form_invalid(form)
 
 
-class ComponentDeleteView(LoginRequiredMixin,
-                          ConfigStoreCachedMixin,
-                          DeleteView):
+class ComponentDeleteView(LoginRequiredMixin, ConfigStoreCachedMixin, DeleteView):
 
     template_name = 'components/delete.html'
 
@@ -262,9 +256,7 @@ class ComponentSettingsRedirectView(RedirectView):
         })
 
 
-class ComponentSettingsView(LoginRequiredMixin,
-                            ConfigStoreCachedMixin,
-                            DetailView):
+class ComponentSettingsView(LoginRequiredMixin, ConfigStoreCachedMixin, DetailView):
 
     template_name = 'components/settings.html'
 
@@ -330,9 +322,7 @@ class ComponentSettingsView(LoginRequiredMixin,
         return data
 
 
-class ComponentSettingsUpdateView(LoginRequiredMixin,
-                                  ConfigStoreCachedMixin,
-                                  UpdateView):
+class ComponentSettingsUpdateView(LoginRequiredMixin, ConfigStoreCachedMixin, UpdateView):
 
     template_name = 'components/update_settings.html'
 
@@ -394,7 +384,7 @@ class ComponentSettingsUpdateView(LoginRequiredMixin,
 
     def form_valid(self, form):
 
-        component = self.object  # type: Component
+        component: Component = self.object
 
         old_data = prepare_component_settings_data(
             component=component,
@@ -429,9 +419,5 @@ class ComponentSettingsUpdateView(LoginRequiredMixin,
 
     def form_invalid(self, form):
         response = super().form_invalid(form)
-        messages.error(
-            self.request,
-            form.errors.as_text(),
-            extra_tags=' alert-danger'
-        )
+        messages.error(self.request, form.errors.as_text(), extra_tags=' alert-danger')
         return response
