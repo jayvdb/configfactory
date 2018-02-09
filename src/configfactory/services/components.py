@@ -40,10 +40,7 @@ def get_environment_settings(environment: Environment, components: Iterable[Comp
 def prepare_component_settings_data(component: Component, environment: Environment):
     return {
         'settings': {
-            environment.alias: configstore.backend.get_data(
-                environment=environment.alias,
-                component=component.alias
-            )
+            environment.alias: configstore.get(environment=environment, component=component)
         }
     }
 
@@ -94,7 +91,7 @@ def validate_component_settings(component: Component, environment: Environment, 
     components_keys = configstore.ikeys(
         environment=environment,
         component=component,
-        settings=settings
+        data=settings
     )
 
     for component_alias, keys in components_keys.items():
@@ -174,7 +171,9 @@ def delete_component(component: Component):
     Delete component.
     """
 
-    for environment in Environment.objects.all():
+    environments = Environment.objects.all()
+
+    for environment in environments:
 
         inject_keys = configstore.ikeys(environment)
 
@@ -199,7 +198,8 @@ def delete_component(component: Component):
     component.delete()
 
     # Delete from config store
-    configstore.delete(component)
+    for environment in environments:
+        configstore.delete(environment=environment, component=component)
 
 
 def inject_params(environment, settings, components=None, strict=True):

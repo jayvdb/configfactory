@@ -2,7 +2,8 @@ from django.conf import settings
 from django.core import serializers
 from django.utils import timezone
 
-from configfactory.models import Backup, Component, Config, Environment, User
+from configfactory import configstore
+from configfactory.models import Backup, Component, Environment, User
 from configfactory.signals import (
     backup_created,
     backup_loaded,
@@ -15,7 +16,7 @@ def create_backup(user: User = None, comment: str = None) -> Backup:
     backup = Backup()
     backup.environments = serializers.serialize('python', Environment.objects.all())
     backup.components = serializers.serialize('python', Component.objects.all())
-    backup.configs = serializers.serialize('python', Config.objects.all())
+    backup.configs = configstore.all_data()
     backup.user = user
     backup.comment = comment
     backup.save()
@@ -30,7 +31,6 @@ def load_backup(backup: Backup, user: User = None):
 
     environments = serializers.deserialize('python', backup.environments)
     components = serializers.deserialize('python', backup.components)
-    configs = serializers.deserialize('python', backup.configs)
 
     for environment in environments:
         environment.save()
@@ -38,8 +38,9 @@ def load_backup(backup: Backup, user: User = None):
     for component in components:
         component.save()
 
-    for config in configs:
-        config.save()
+    for environment, component_data in backup.configs.items():
+        for component, data in component_data.items():
+            configstore.update(environment, component, data=data)
 
     # Notify about loaded backup
     backup_loaded.send(sender=Backup, backup=backup, user=user)

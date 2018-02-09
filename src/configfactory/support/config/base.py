@@ -73,8 +73,6 @@ class Config:
 
         if as_type is list:
             return self._as_list(value)
-        elif as_type is dict:
-            return self._as_dict(value)
         elif as_type is bool:
             return self._as_bool(value)
         elif as_type is int:
@@ -91,8 +89,8 @@ class Config:
     def getlist(self, name, default=None, strict=None):
         return self.get(name, default=default, strict=strict, as_type=list)
 
-    def getdict(self, name, default=None, strict=None):
-        return self.get(name, default=default, strict=strict, as_type=dict)
+    def getdict(self, name: str, default: dict = None) -> dict:
+        return self._as_dict(name) or default or {}
 
     def _as_bool(self, value) -> bool:
         if value is None:

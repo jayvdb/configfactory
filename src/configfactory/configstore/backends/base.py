@@ -1,15 +1,11 @@
 import abc
-from typing import Optional, Dict
+from typing import Dict
 
 
 class ConfigStoreBackend(abc.ABC):
 
     @abc.abstractmethod
     def all_data(self) -> Dict[str, Dict[str, str]]:
-        pass
-
-    @abc.abstractmethod
-    def get_data(self, environment: str, component: str) -> Optional[dict]:
         pass
 
     @abc.abstractmethod

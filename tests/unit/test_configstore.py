@@ -22,9 +22,6 @@ class ConfigStoreTestCase(TestCase):
         cls.names = ComponentFactory(alias='names', name='Names')
         cls.credentials = ComponentFactory(alias='credentials', name='Credentials')
 
-    def test_empty_store(self):
-        assert configstore.all() == {}
-
     def test_all_settings(self):
 
         configstore.update(self.base, self.db, data={
@@ -37,18 +34,17 @@ class ConfigStoreTestCase(TestCase):
             'pass': '123123'
         })
 
-        assert configstore.all() == {
-            'base': {
-                'db': {
-                    'user': 'root',
-                    'pass': ''
-                }
-            },
-            'dev': {
-                'db': {
-                    'user': 'devuser',
-                    'pass': '123123'
-                }
+        assert configstore.env(self.base) == {
+            'db': {
+                'user': 'root',
+                'pass': ''
+            }
+        }
+
+        assert configstore.env(self.dev) == {
+            'db': {
+                'user': 'devuser',
+                'pass': '123123'
             }
         }
 
@@ -64,15 +60,15 @@ class ConfigStoreTestCase(TestCase):
         })
 
         with self.assertNumQueries(3):
-            configstore.all()
-            configstore.all()
-            configstore.all()
+            configstore.env(self.base)
+            configstore.env(self.base)
+            configstore.env(self.base)
 
         with self.assertNumQueries(1):
             with configstore.cachecontext():
-                configstore.all()
-                configstore.all()
-                configstore.all()
+                configstore.env(self.base)
+                configstore.env(self.base)
+                configstore.env(self.base)
 
     def test_update_settings_invalid_type(self):
 

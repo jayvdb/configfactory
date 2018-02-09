@@ -119,7 +119,7 @@ STATICFILES_DIRS = (
 ######################################
 # Logging settings
 ######################################
-LOGGING_DIR = config.get('logging.dir', appdirs.user_data_dir('logs'))
+LOGGING_DIR = config.get('logging.directory', appdirs.user_data_dir('logs'))
 
 LOGGING_FILENAME = config.get('logging.filename', 'configfactory.log')
 
@@ -284,7 +284,7 @@ SECURED_KEYS = config.getlist('secured_keys', default=['pass', 'password'])
 # ConfigStore settings
 CONFIGSTORE_BACKEND = config.get('configstore.backend', default='database')
 
-CONFIGSTORE_OPTIONS = config.getdict('configstore.options', default={})
+CONFIGSTORE_OPTIONS = config.getdict('configstore.options.', default={})
 
 # Backups settings
 BACKUPS_INTERVAL = config.getint('backup.interval', default=7200)  # Every 2 hours

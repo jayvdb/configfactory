@@ -1,15 +1,16 @@
 import contextlib
 import threading
-from typing import Dict
+from typing import Dict, Union
 
 from django.conf import settings
 from django.utils.functional import cached_property
 
 from configfactory.models import Component, Environment
-from configfactory.utils import json, security, tplparams, dicthelper
+from configfactory.utils import dicthelper, json, security, tplparams
 
 from .backends.base import ConfigStoreBackend
 from .backends.database import DatabaseConfigStore
+from .backends.filesystem import FileSystemConfigStore
 from .backends.memory import MemoryConfigStore
 
 
@@ -17,12 +18,9 @@ class ConfigStore:
 
     backend_registry = {
         'memory': MemoryConfigStore,
+        'filesystem': FileSystemConfigStore,
         'database': DatabaseConfigStore
     }
-
-    secured_keys = settings.SECURED_KEYS
-
-    encrypt_enabled = settings.ENCRYPT_ENABLED
 
     def __init__(self, backend: ConfigStoreBackend):
         self.backend = backend
@@ -58,15 +56,15 @@ class ConfigStore:
         if self.cached():
             return getattr(self._cache, 'cache')
 
-        all_settings = {}
+        all_data = {}
         for environment, component_data in self.backend.all_data().items():
-            all_settings[environment] = {}
+            all_data[environment] = {}
             for component, data in component_data.items():
-                all_settings[environment][component] = security.decrypt_dict(
+                all_data[environment][component] = security.decrypt_dict(
                     data=json.loads(data),
                     secured_keys=settings.SECURED_KEYS
                 )
-        return all_settings
+        return all_data
 
     def env(self, environment: Environment) -> dict:
         """
@@ -82,79 +80,100 @@ class ConfigStore:
         Get settings.
         """
 
-        all_settings = self.all()
+        all_data = self.all()
 
         if environment.is_base:
             try:
-                return all_settings[environment.alias][component.alias]
+                return all_data[environment.alias][component.alias]
             except KeyError:
                 return {}
 
         else:
 
             try:
-                base_settings = all_settings[self.base_environment.alias][component.alias]
+                base_data = all_data[self.base_environment.alias][component.alias]
             except KeyError:
-                base_settings = {}
+                base_data = {}
 
             try:
-                env_settings = all_settings[environment.alias][component.alias]
+                env_data = all_data[environment.alias][component.alias]
             except KeyError:
-                env_settings = {}
+                env_data = {}
 
             if environment.fallback:
 
                 try:
-                    fallback_settings = all_settings[environment.fallback.alias][component.alias]
-                    env_settings = dicthelper.merge(fallback_settings, env_settings)
+                    fallback_data = all_data[environment.fallback.alias][component.alias]
+                    env_data = dicthelper.merge(fallback_data, env_data)
                 except KeyError:
                     pass
 
-            return dicthelper.merge(base_settings, env_settings)
+            return dicthelper.merge(base_data, env_data)
 
-    def update(self, environment: Environment, component: Component, data: dict):
+    def update(self, environment: Union[Environment, str], component: Union[Component, str], data: dict):
         """
         Update settings.
         """
 
+        if isinstance(environment, Environment):
+            environment = environment.alias
+
+        if isinstance(component, Component):
+            component = component.alias
+
         if not isinstance(data, dict):
             raise TypeError("`settings` must be dict type.")
 
-        if self.encrypt_enabled:
+        if settings.ENCRYPT_ENABLED:
             data = security.encrypt_dict(data, secured_keys=settings.SECURED_KEYS)
 
         self.backend.update_data(
-            environment=environment.alias,
-            component=component.alias,
+            environment=environment,
+            component=component,
             data=json.dumps(data, compress=True)
         )
 
-    def delete(self, component: Component):
+    def delete(self, environment: Union[Environment, str], component: Union[Component, str]):
         """
         Delete component settings.
         """
-        environments = self.all().keys()
-        for environment in environments:
-            self.backend.delete_data(
-                environment=environment,
-                component=component.alias
-            )
 
-    def ikeys(self, environment: Environment, component: Component = None, settings: dict = None):
+        if isinstance(environment, Environment):
+            environment = environment.alias
+
+        if isinstance(component, Component):
+            component = component.alias
+
+        self.backend.delete_data(environment=environment, component=component)
+
+    def normalize(self):
+        """
+        Normalize ConfigStore data.
+        """
+
+        for environment, components_data in self.all().items():
+            for component, settings in components_data.items():
+                if not Environment.objects.filter(alias=environment).exists():
+                    self.backend.delete_data(environment=environment, component=component)
+                    continue
+                if not Component.objects.filter(alias=component).exists():
+                    self.backend.delete_data(environment=environment, component=component)
+
+    def ikeys(self, environment: Environment, component: Component = None, data: dict = None):
         """
         Get components inject keys.
         """
 
         keys = {}
-        env_settings = self.env(environment)
+        env_data = self.env(environment)
 
         # Update with changed component settings
         if component:
-            if settings is None:
-                settings = {}
-            env_settings[component] = settings
+            if data is None:
+                data = {}
+            env_data[component] = data
 
-        for component, data in env_settings.items():
+        for component, data in env_data.items():
             for match in tplparams.param_re.findall(json.dumps(data, compress=True)):
                 if component not in keys:
                     keys[component] = set()
