@@ -102,10 +102,7 @@ def validate_component_settings(component: Component, environment: Environment, 
             if key.startswith(component.alias) and key not in setting_keys:
                 exc = InjectKeyError('error', key=key)
                 raise ComponentValidationError(
-                    _('Component `%s` refers to changed key `%s`.') % (
-                        component_alias,
-                        key
-                    ),
+                    _('Component `%s` refers to changed key `%s`.') % (component_alias, key),
                     exc=exc
                 )
 
@@ -182,6 +179,9 @@ def delete_component(component: Component):
         inject_keys = configstore.ikeys(environment)
 
         for component_alias, keys in inject_keys.items():
+
+            if component.alias == component_alias:
+                continue
 
             referred_keys = list(
                 filter(lambda k: k.startswith(component.alias), keys)
