@@ -9,7 +9,7 @@ def users_group():
     """Perform users commands."""
 
 
-@users_group.command()
+@users_group.command('create')
 @setup_django
 def create_command():
     """Create super user."""

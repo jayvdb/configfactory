@@ -5,7 +5,7 @@ from configfactory import configstore
 
 class Command(BaseCommand):
 
-    help = 'Cleanup Config Store.'
+    help = 'Normalize Config Store.'
 
     def handle(self, *args, **options):
 
