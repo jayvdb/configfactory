@@ -5,8 +5,7 @@ from configfactory.models import LogEntry
 from configfactory.utils.db import model_to_dict
 
 
-def log_action(action=None, action_type=None, user=None, instance=None,
-               object_repr=None, old_data=None, new_data=None):
+def log_action(action=None, action_type=None, user=None, instance=None, object_repr=None, old_data=None, new_data=None):
 
     if not action and not action_type:
         raise ValueError('action or action_type must be defined.')
@@ -54,8 +53,7 @@ def log_create_object(instance, user=None, fields=None, exclude=None):
     )
 
 
-def log_update_object(instance, old_data=None, new_data=None, user=None,
-                      object_repr=None, fields=None, exclude=None):
+def log_update_object(instance, old_data=None, new_data=None, user=None, object_repr=None, fields=None, exclude=None):
 
     if new_data is None:
         new_data = model_to_dict(
