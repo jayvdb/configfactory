@@ -29,8 +29,8 @@ def create_backup(user: User = None, comment: str = None) -> Backup:
 
 def load_backup(backup: Backup, user: User = None):
 
-    environments = serializers.deserialize('python', backup.environments)
-    components = serializers.deserialize('python', backup.components)
+    environments = serializers.deserialize('python', backup.environments, ignorenonexistent=True)
+    components = serializers.deserialize('python', backup.components, ignorenonexistent=True)
 
     for environment in environments:
         environment.save()

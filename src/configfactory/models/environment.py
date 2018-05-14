@@ -7,20 +7,11 @@ from configfactory.shortcuts import get_base_environment_alias
 
 class Environment(models.Model):
 
-    name = models.CharField(
-        max_length=128,
-        verbose_name=_('name')
-    )
+    name = models.CharField(max_length=128, verbose_name=_('name'))
 
-    alias = models.SlugField(
-        unique=True,
-        verbose_name=_('alias')
-    )
+    alias = models.SlugField(unique=True, verbose_name=_('alias'))
 
-    order = models.SmallIntegerField(
-        verbose_name=_('order'),
-        default=0
-    )
+    order = models.SmallIntegerField(verbose_name=_('order'), default=0)
 
     fallback = models.ForeignKey(
         to='self',
