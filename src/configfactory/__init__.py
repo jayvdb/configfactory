@@ -1,5 +1,5 @@
 # Set public version
-__version__ = '0.51'
+__version__ = '0.52'
 __author__ = 'Anton Ruhlov <antonruhlov@gmail.com>'
 
 

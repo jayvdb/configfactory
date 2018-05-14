@@ -32,7 +32,7 @@ requires = [
     'appdirs==1.4.3',
     'arrow==0.12.1',
     'colorlog==3.1.2',
-    'dictdiffer==0.7',
+    'dictdiffer==0.7.1',
     'faker==0.8.10',
     'factory-boy==2.9.2'
 ]
