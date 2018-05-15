@@ -54,6 +54,9 @@ class Environment(models.Model):
     def __str__(self):
         return self.name
 
+    def natural_key(self):
+        return self.alias,
+
     @property
     def is_base(self):
         return self.alias == get_base_environment_alias()

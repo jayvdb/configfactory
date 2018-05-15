@@ -26,10 +26,7 @@ def package_dir(target=None):
 
 
 def var_dir(target=None):
-    return target_dir(
-        root=root_dir('var'),
-        target=target
-    )
+    return target_dir(root=root_dir('var'), target=target)
 
 
 def target_dir(root, target=None):

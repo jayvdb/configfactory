@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.core import serializers
+from django.core.files.base import ContentFile
 from django.utils import timezone
 
 from configfactory import configstore
@@ -9,14 +9,55 @@ from configfactory.signals import (
     backup_loaded,
     backups_cleaned,
 )
+from configfactory.utils import json
 
 
 def create_backup(user: User = None, comment: str = None) -> Backup:
 
+    data = {
+        'environments': [],
+        'components': [],
+        'configs': configstore.all_data(),
+    }
+
+    for environment in Environment.objects.order_by('pk'):
+
+        if environment.fallback_id:
+            fallback = environment.fallback.alias
+        else:
+            fallback = None
+
+        data['environments'].append({
+            'id': environment.pk,
+            'name': environment.name,
+            'alias': environment.alias,
+            'fallback': fallback,
+            'is_active': environment.is_active,
+            'created_at': environment.created_at,
+            'updated_at': environment.updated_at,
+        })
+
+    for component in Component.objects.all():
+
+        data['components'].append({
+            'id': component.pk,
+            'name': component.name,
+            'alias': component.alias,
+            'settings_json': component.settings_json,
+            'schema_json': component.schema_json,
+            'is_global': component.is_global,
+            'require_schema': component.require_schema,
+            'strict_keys': component.strict_keys,
+            'is_active': component.is_active,
+            'created_at': component.created_at,
+            'updated_at': component.updated_at,
+        })
+
     backup = Backup()
-    backup.environments = serializers.serialize('python', Environment.objects.order_by('pk'))
-    backup.components = serializers.serialize('python', Component.objects.all())
-    backup.configs = configstore.all_data()
+    backup.data_file.save(
+        name=f'configfactory-backup-{timezone.now()}.json',
+        content=ContentFile(json.dumps(data, indent=4))
+    )
     backup.user = user
     backup.comment = comment
     backup.save()
@@ -29,16 +70,69 @@ def create_backup(user: User = None, comment: str = None) -> Backup:
 
 def load_backup(backup: Backup, user: User = None):
 
-    environments = serializers.deserialize('python', backup.environments, ignorenonexistent=True)
-    components = serializers.deserialize('python', backup.components, ignorenonexistent=True)
+    with backup.data_file.open() as fp:
+        data = json.loads(fp.read())
 
-    for environment in environments:
+    environments = data.get('environments', [])
+
+    for item in environments:
+
+        environment_id = item['id']
+
+        try:
+            environment = Environment.objects.get(pk=environment_id)
+        except Environment.DoesNotExist:
+            environment = Environment(pk=environment_id)
+
+        environment.name = item['name']
+        environment.alias = item['alias']
+        environment.is_active = item['is_active']
+        environment.created_at = item['created_at']
+        environment.updated_at = item['updated_at']
         environment.save()
 
-    for component in components:
+    for item in environments:
+
+        environment_id = item['id']
+        environment = Environment.objects.get(pk=environment_id)
+
+        fallback_alias = item['fallback']
+
+        if not fallback_alias:
+            continue
+
+        try:
+            fallback = Environment.objects.get(alias=fallback_alias)
+        except Environment.DoesNotExist:
+            continue
+
+        environment.fallback = fallback
+        environment.save(update_fields=['fallback'])
+
+    components = data.get('components', [])
+
+    for item in components:
+
+        component_id = item['id']
+
+        try:
+            component = Component.objects.get(pk=component_id)
+        except Component.DoesNotExist:
+            component = Component(pk=component_id)
+
+        component.name = item['name']
+        component.alias = item['alias']
+        component.settings_json = item['settings_json']
+        component.schema_json = item['schema_json']
+        component.is_global = item['is_global']
+        component.require_schema = item['require_schema']
+        component.strict_keys = item['strict_keys']
+        component.is_active = item['is_active']
+        component.created_at = item['created_at']
+        component.updated_at = item['updated_at']
         component.save()
 
-    for environment, component_data in backup.configs.items():
+    for environment, component_data in data.get('configs', {}).items():
         for component, data in component_data.items():
             configstore.update(environment, component, data=data)
 

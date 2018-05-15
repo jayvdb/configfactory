@@ -1,4 +1,14 @@
+import atexit
+import shutil
+import tempfile
+
 from configfactory.settings import *
+
+TMP_ROOT = tempfile.mkdtemp(prefix='configfactory_')
+
+tempfile.tempdir = TMP_ROOT
+atexit.register(shutil.rmtree, str(TMP_ROOT))
+
 
 ###########################################
 # Database settings
@@ -13,6 +23,11 @@ DATABASES = {
 DATABASE_DB_TABLES_REPLACE = False
 
 DATABASE_DB_TABLES_PREFIX = None
+
+######################################
+# Media settings
+######################################
+MEDIA_ROOT = TMP_ROOT
 
 ######################################
 # Logging settings

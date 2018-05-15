@@ -3,7 +3,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse, reverse_lazy
-from django.utils.text import slugify
 from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.generic import DeleteView, DetailView, ListView, TemplateView
@@ -14,7 +13,6 @@ from configfactory.forms.backup import BackupImportForm
 from configfactory.mixins import SuperuserRequiredMixin
 from configfactory.models import Backup
 from configfactory.services.backups import create_backup, load_backup
-from configfactory.utils import json
 
 
 class BackupListView(LoginRequiredMixin, ListView):
@@ -63,18 +61,10 @@ class BackupExportView(SuperuserRequiredMixin, View):
     def get(self, request, pk):
 
         backup = get_object_or_404(Backup, pk=pk)
-        filename = '{name}.json'.format(name=slugify(backup))
 
-        data = json.dumps({
-            'environments': backup.environments_data,
-            'components': backup.components_data,
-            'configs': backup.configs_data,
-        }, indent=4)
-
-        response = HttpResponse(data, content_type='application/json')
-        response['Content-Disposition'] = 'attachment; filename={filename}'.format(
-            filename=filename
-        )
+        with backup.data_file.open() as fp:
+            response = HttpResponse(fp.read(), content_type='application/json')
+            response['Content-Disposition'] = f'attachment; filename={backup.data_file.name}'
 
         return response
 
@@ -94,23 +84,17 @@ class BackupImportView(SuperuserRequiredMixin,
 
         response = super().form_valid(form)
 
-        import_file = form.cleaned_data['file']
-        data = json.loads(import_file.file.read().decode())
+        data_file = form.cleaned_data['file']
 
         backup = Backup()
-        backup.environments_data = data['environments']
-        backup.components_data = data['components']
-        backup.configs_data = data['configs']
+        backup.data_file = data_file
         backup.user = self.request.user
-        backup.comment = import_file.name
+        backup.comment = data_file.name
         backup.save()
 
         load_backup(backup, user=self.request.user)
 
-        messages.success(
-            self.request,
-            _('Backup `%s` successfully imported.') % 'file'
-        )
+        messages.success(self.request, _('Backup `%s` successfully imported.') % 'file')
 
         return response
 
@@ -126,8 +110,5 @@ class BackupDeleteView(SuperuserRequiredMixin, DeleteView):
     def delete(self, request, *args, **kwargs):
         response = super().delete(request, *args, **kwargs)
         backup = self.object
-        messages.success(
-            request,
-            _('Backup `%s` successfully deleted.') % backup
-        )
+        messages.success(request, _('Backup `%s` successfully deleted.') % backup)
         return response

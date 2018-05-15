@@ -116,6 +116,13 @@ STATICFILES_DIRS = (
     dirs.package_dir('static'),
 )
 
+################################################################
+# Media settings
+################################################################
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = config.get('data_dir', default=dirs.var_dir('data'))
+
 ######################################
 # Logging settings
 ######################################
