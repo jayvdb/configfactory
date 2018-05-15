@@ -31,6 +31,7 @@ def create_backup(user: User = None, comment: str = None) -> Backup:
             'id': environment.pk,
             'name': environment.name,
             'alias': environment.alias,
+            'order': environment.order,
             'fallback': fallback,
             'is_active': environment.is_active,
             'created_at': environment.created_at,
@@ -90,7 +91,8 @@ def load_backup(backup: Backup, user: User = None):
 
         environment.alias = alias
         environment.name = item['name']
-        environment.is_active = item['is_active']
+        environment.order = item.get('order', 0)
+        environment.is_active = item.get('is_active', True)
         environment.created_at = item['created_at']
         environment.updated_at = item['updated_at']
         environment.save()
@@ -130,7 +132,6 @@ def load_backup(backup: Backup, user: User = None):
 
         component.alias = alias
         component.name = item['name']
-        component.settings_json = item['settings_json']
         component.schema_json = item['schema_json']
         component.is_global = item['is_global']
         component.require_schema = item['require_schema']

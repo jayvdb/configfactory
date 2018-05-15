@@ -92,11 +92,20 @@ class ComponentUpdateView(LoginRequiredMixin, ConfigStoreCachedMixin, UpdateView
 
     context_object_name = 'component'
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.old_data = {}
+
     def get_queryset(self):
         return self.request.components
 
+    def get_object(self, queryset=None):
+        obj = super().get_object(queryset=queryset)
+        self.old_data = model_to_dict(obj, fields=self.form_class.Meta.fields)
+        return obj
+
     def get_success_url(self):
-        component = self.object  # type: Component
+        component: Component = self.object
         return reverse('component', kwargs={
             'alias': component.alias
         })
@@ -110,17 +119,16 @@ class ComponentUpdateView(LoginRequiredMixin, ConfigStoreCachedMixin, UpdateView
 
         fields = self.form_class.Meta.fields
 
-        old_data = model_to_dict(self.object, fields=fields)
-
         response = super().form_valid(form)
 
-        component = self.object  # type: Component
+        component: Component = self.object
 
         component_updated.send(
             sender=Component,
             component=component,
-            old_data=old_data,
-            user=self.request.user
+            old_data=self.old_data,
+            user=self.request.user,
+            fields=fields
         )
 
         messages.success(

@@ -75,35 +75,41 @@ class ConfigStore:
         except KeyError:
             return {}
 
-    def get(self, environment: Environment, component: Component) -> dict:
+    def get(self, environment: Union[Environment, str], component: Union[Component, str]) -> dict:
         """
         Get settings.
         """
+
+        if isinstance(environment, str):
+            environment = Environment.objects.get(alias=environment)
+
+        if isinstance(component, Component):
+            component = component.alias
 
         all_data = self.all()
 
         if environment.is_base:
             try:
-                return all_data[environment.alias][component.alias]
+                return all_data[environment.alias][component]
             except KeyError:
                 return {}
 
         else:
 
             try:
-                base_data = all_data[self.base_environment.alias][component.alias]
+                base_data = all_data[self.base_environment.alias][component]
             except KeyError:
                 base_data = {}
 
             try:
-                env_data = all_data[environment.alias][component.alias]
+                env_data = all_data[environment.alias][component]
             except KeyError:
                 env_data = {}
 
             if environment.fallback:
 
                 try:
-                    fallback_data = all_data[environment.fallback.alias][component.alias]
+                    fallback_data = all_data[environment.fallback.alias][component]
                     env_data = dicthelper.merge(fallback_data, env_data)
                 except KeyError:
                     pass

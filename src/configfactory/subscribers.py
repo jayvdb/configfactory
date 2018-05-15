@@ -1,3 +1,6 @@
+import copy
+
+import dictdiffer
 from django.contrib.auth.models import Group
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.db.models.signals import pre_save
@@ -6,7 +9,11 @@ from django.dispatch import receiver
 from configfactory.models import Backup, Component, Environment, User
 from configfactory.models.api_settings import APISettings
 from configfactory.services.api_settings import generate_api_token
-from configfactory.services.components import prepare_component_settings_data
+from configfactory.services.components import (
+    get_component_settings,
+    prepare_component_settings_data,
+    update_component_settings,
+)
 from configfactory.services.logs import (
     log_action,
     log_create_object,
@@ -17,6 +24,7 @@ from configfactory.signals import (
     backup_created,
     backup_loaded,
     backups_cleaned,
+    component_alias_changed,
     component_created,
     component_deleted,
     component_settings_updated,
@@ -36,19 +44,13 @@ from configfactory.signals import (
 @receiver(user_logged_in, sender=User)
 def user_logged_in_handler(sender, request, user, **kwargs):
 
-    log_action(
-        action='user login',
-        user=user
-    )
+    log_action(action='user login', user=user)
 
 
 @receiver(user_logged_out, sender=User)
 def user_logged_out_handler(sender, request, user, **kwargs):
 
-    log_action(
-        action='user logout',
-        user=user
-    )
+    log_action(action='user logout', user=user)
 
 
 @receiver(group_created, sender=Group)
@@ -168,13 +170,40 @@ def component_created_handler(sender, component, **kwargs):
 @receiver(component_updated, sender=Component)
 def component_updated_handler(sender, component, old_data, **kwargs):
 
-    log_update_object(
+    log_entry = log_update_object(
         instance=component,
         old_data=old_data,
         new_data=kwargs.get('new_data'),
         fields=kwargs.get('fields'),
         user=kwargs.get('user'),
     )
+
+    for action, field, values in log_entry.diff_data:
+        if action == dictdiffer.CHANGE and field == 'alias':
+            component_alias_changed.send(
+                sender=Component,
+                component=component,
+                old_alias=values[0],
+                new_alias=values[1]
+            )
+
+
+@receiver(component_alias_changed, sender=Component)
+def component_alias_changed_handler(sender, component: Component, old_alias: str, **kwargs):
+
+    for environment in Environment.objects.all():
+
+        settings_copy = copy.deepcopy(get_component_settings(
+            component=old_alias,
+            environment=environment
+        ))
+
+        update_component_settings(
+            component=component,
+            environment=environment,
+            settings=settings_copy,
+            skip_validation=True
+        )
 
 
 @receiver(component_settings_updated, sender=Component)

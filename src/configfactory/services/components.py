@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Union
 
 import dictdiffer
 import jsonschema
@@ -45,15 +45,12 @@ def prepare_component_settings_data(component: Component, environment: Environme
     }
 
 
-def get_component_settings(component: Component, environment: Environment):
+def get_component_settings(component: Union[str, Component], environment: Environment):
     """
     Get component settings.
     """
 
-    return configstore.get(
-        environment=environment,
-        component=component
-    )
+    return configstore.get(environment=environment, component=component)
 
 
 def update_component_settings(component: Component,
