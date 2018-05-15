@@ -11,6 +11,9 @@ from configfactory.test.factories import ComponentFactory, EnvironmentFactory
 
 class BackupsServiceTestCase(TestCase):
 
+    def setUp(self):
+        Environment.objects.all().delete()
+
     def test_create_and_load_backup(self):
 
         base = EnvironmentFactory(name='Base', alias='base')
@@ -91,9 +94,9 @@ class BackupsServiceTestCase(TestCase):
 
     def test_fallback_environment(self):
 
-        EnvironmentFactory(name='Base', alias='base')
-        development = EnvironmentFactory(name='Development', alias='development')
-        EnvironmentFactory(name='Testing', alias='testing', fallback=development)
+        EnvironmentFactory(name='Base', alias='base', order=0)
+        development = EnvironmentFactory(name='Development', alias='development', order=2)
+        EnvironmentFactory(name='Testing', alias='testing', fallback=development, order=1)
 
         backup = create_backup(comment='Test')
 

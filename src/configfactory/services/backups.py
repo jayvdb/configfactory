@@ -14,7 +14,7 @@ from configfactory.signals import (
 def create_backup(user: User = None, comment: str = None) -> Backup:
 
     backup = Backup()
-    backup.environments = serializers.serialize('python', Environment.objects.all())
+    backup.environments = serializers.serialize('python', Environment.objects.order_by('pk'))
     backup.components = serializers.serialize('python', Component.objects.all())
     backup.configs = configstore.all_data()
     backup.user = user
@@ -48,13 +48,9 @@ def load_backup(backup: Backup, user: User = None):
 
 def clean_backups():
 
-    threshold = timezone.now() - timezone.timedelta(
-        seconds=settings.BACKUPS_CLEAN_THRESHOLD
-    )
+    threshold = timezone.now() - timezone.timedelta(seconds=settings.BACKUPS_CLEAN_THRESHOLD)
 
-    Backup.objects.auto().filter(
-        created_at__lt=threshold
-    ).delete()
+    Backup.objects.auto().filter(created_at__lt=threshold).delete()
 
     # Notify about cleaned backups
     backups_cleaned.send(sender=Backup)
