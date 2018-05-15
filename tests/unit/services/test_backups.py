@@ -88,3 +88,20 @@ class BackupsServiceTestCase(TestCase):
             'pass': '123123',
             'host': 'mysql-dev',
         }
+
+    def test_fallback_environment(self):
+
+        EnvironmentFactory(name='Base', alias='base')
+        development = EnvironmentFactory(name='Development', alias='development')
+        EnvironmentFactory(name='Testing', alias='testing', fallback=development)
+
+        backup = create_backup(comment='Test')
+
+        # Delete all
+        Environment.objects.all().delete()
+
+        load_backup(backup)
+
+        assert Environment.objects.filter(alias='base').exists()
+        assert Environment.objects.filter(alias='development').exists()
+        assert Environment.objects.filter(alias='testing').exists()
