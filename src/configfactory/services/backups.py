@@ -17,7 +17,7 @@ def create_backup(user: User = None, comment: str = None) -> Backup:
     data = {
         'environments': [],
         'components': [],
-        'configs': configstore.all_data(),
+        'configs': configstore.all_data(decrypt=False),
     }
 
     for environment in Environment.objects.order_by('pk'):
@@ -44,7 +44,6 @@ def create_backup(user: User = None, comment: str = None) -> Backup:
             'id': component.pk,
             'name': component.name,
             'alias': component.alias,
-            'settings_json': component.settings_json,
             'schema_json': component.schema_json,
             'is_global': component.is_global,
             'require_schema': component.require_schema,

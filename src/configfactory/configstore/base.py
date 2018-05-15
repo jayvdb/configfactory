@@ -48,7 +48,7 @@ class ConfigStore:
     def base_environment(self) -> Environment:
         return Environment.objects.base().get()
 
-    def all(self) -> Dict[str, Dict[str, dict]]:
+    def all(self, decrypt: bool = True) -> Dict[str, Dict[str, dict]]:
         """
         Get all settings.
         """
@@ -57,13 +57,20 @@ class ConfigStore:
             return getattr(self._cache, 'cache')
 
         all_data = {}
+
         for environment, component_data in self.backend.all_data().items():
+
             all_data[environment] = {}
+
             for component, data in component_data.items():
-                all_data[environment][component] = security.decrypt_dict(
-                    data=json.loads(data),
-                    secured_keys=settings.SECURED_KEYS
-                )
+                if decrypt:
+                    all_data[environment][component] = security.decrypt_dict(
+                        data=json.loads(data),
+                        secured_keys=settings.SECURED_KEYS
+                    )
+                else:
+                    all_data[environment][component] = json.loads(data)
+
         return all_data
 
     def env(self, environment: Environment) -> dict:
@@ -164,6 +171,8 @@ class ConfigStore:
                     continue
                 if not Component.objects.filter(alias=component).exists():
                     self.backend.delete_data(environment=environment, component=component)
+                    continue
+                self.update(environment, component, data=settings)
 
     def ikeys(self, environment: Environment, component: Component = None, data: dict = None):
         """

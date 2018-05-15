@@ -59,6 +59,9 @@ setup(
             'pytest',
             'pytest-cov',
             'pytest-django',
+        ],
+        'mysql': [
+            'mysqlclient==1.3.12',
         ]
     },
     entry_points={

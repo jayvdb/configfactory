@@ -278,7 +278,7 @@ ENCRYPT_ENABLED = config.get('encrypt.enabled', default=False)
 
 ENCRYPT_TOKEN = config.get('encrypt.token', default=SECRET_KEY)
 
-ENCRYPT_PREFIX = '$$$enc$$$:'
+ENCRYPT_PREFIX = '$$$ENCRYPTED$$$:'
 
 # Check encrypt key length
 if ENCRYPT_ENABLED:
