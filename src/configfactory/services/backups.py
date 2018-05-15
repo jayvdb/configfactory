@@ -78,14 +78,18 @@ def load_backup(backup: Backup, user: User = None):
     for item in environments:
 
         environment_id = item['id']
+        alias = item['alias']
 
         try:
             environment = Environment.objects.get(pk=environment_id)
         except Environment.DoesNotExist:
             environment = Environment(pk=environment_id)
 
+        if environment.alias != alias:
+            Environment.objects.filter(alias=alias).delete()
+
+        environment.alias = alias
         environment.name = item['name']
-        environment.alias = item['alias']
         environment.is_active = item['is_active']
         environment.created_at = item['created_at']
         environment.updated_at = item['updated_at']
@@ -114,14 +118,18 @@ def load_backup(backup: Backup, user: User = None):
     for item in components:
 
         component_id = item['id']
+        alias = item['alias']
 
         try:
             component = Component.objects.get(pk=component_id)
         except Component.DoesNotExist:
             component = Component(pk=component_id)
 
+        if component.alias != alias:
+            Component.objects.filter(alias=alias).delete()
+
+        component.alias = alias
         component.name = item['name']
-        component.alias = item['alias']
         component.settings_json = item['settings_json']
         component.schema_json = item['schema_json']
         component.is_global = item['is_global']
