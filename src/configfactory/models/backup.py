@@ -6,7 +6,13 @@ from configfactory.managers import BackupManager
 
 class Backup(models.Model):
 
-    data_file = models.FileField(upload_to='backups')
+    environments_data = models.TextField(default='{}')
+
+    components_data = models.TextField(default='{}')
+
+    configs_data = models.TextField(default='{}')
+
+    data_file = models.FileField(upload_to='backups', blank=True, null=True)
 
     user = models.ForeignKey('configfactory.User', on_delete=models.SET_NULL,
                              blank=True, null=True, verbose_name=_('user'))
