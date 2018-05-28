@@ -140,10 +140,12 @@ def validate_component_settings(component: Component, environment: Environment, 
             if 'add' in summary:
                 add_keys = [
                     add[0] for add in summary[2]
+                    if not isinstance(add[0], int)
                 ]
             if 'remove' in summary:
                 remove_keys = [
                     remove[0] for remove in summary[2]
+                    if not isinstance(remove[0], int)
                 ]
 
         if add_keys:
