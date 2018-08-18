@@ -26,6 +26,12 @@ class Config:
         self._settings = {}
         self.is_default = False
 
+    def __getitem__(self, item):
+        return self.get(item, strict=True)
+
+    def __contains__(self, item):
+        return self.has(item)
+
     def default(self):
         return os.environ.get(
             self.envvar,
@@ -63,6 +69,9 @@ class Config:
         shutil.copyfile(self.defaults_filename, dst)
 
         return dst, True
+
+    def has(self, name):
+        return name in self._settings
 
     def get(self, name, default=None, strict=False, as_type=None):
 
@@ -125,19 +134,10 @@ class Config:
             for k, v in self._settings.items() if k.startswith(value)
         }
 
-    def has(self, name):
-        return name in self._settings
-
-    def __getitem__(self, item):
-        return self.get(item, strict=True)
-
-    def __contains__(self, item):
-        return self.has(item)
-
 
 class ConfigHandler(LazyObject):
 
     def _setup(self):
-        wrapped = Config()
-        wrapped.load()
-        self._wrapped = wrapped
+        config = Config()
+        config.load()
+        self._wrapped = config

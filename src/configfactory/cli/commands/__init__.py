@@ -2,13 +2,15 @@ from multiprocessing import Process, cpu_count
 
 import click
 import django
-from configfactory.support import config
+from configfactory.support.config import config
 from django.core.management import call_command, execute_from_command_line
 
 
 @click.command('init')
 def init_command():
     """Initialize ConfigFactory."""
+
+    config.create()
 
     django.setup()
 

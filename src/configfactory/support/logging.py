@@ -1,4 +1,4 @@
-def debug_logging(logging_dict, handler=None):
+def debug_logging(logging_dict, handler: str=None):
     """
     Debug logging.
     """

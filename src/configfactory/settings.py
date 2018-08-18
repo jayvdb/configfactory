@@ -1,10 +1,10 @@
 import os
 
-import appdirs
 import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 
-from configfactory.support import appenv, config, dirs
+from configfactory.support import appenv, appdir
+from configfactory.support.config import config
 from configfactory.support.logging import debug_logging
 
 ###########################################
@@ -113,7 +113,7 @@ STATICFILES_FINDERS = (
 )
 
 STATICFILES_DIRS = (
-    dirs.package_dir('static'),
+    appdir.package_dir('static'),
 )
 
 ################################################################
@@ -121,14 +121,16 @@ STATICFILES_DIRS = (
 ################################################################
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = config.get('data_dir', default=dirs.var_dir('data'))
+MEDIA_ROOT = config.get('data_dir', default=appdir.var_dir('data'))
 
 ######################################
 # Logging settings
 ######################################
-LOGGING_DIR = config.get('logging.directory', appdirs.user_data_dir('logs'))
+LOGGING_DIR = config.get('logging.directory', appdir.var_dir('log'))
 
 LOGGING_FILENAME = config.get('logging.filename', 'configfactory.log')
+
+print(LOGGING_DIR)
 
 LOGGING = {
     'version': 1,

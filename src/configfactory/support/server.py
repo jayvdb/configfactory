@@ -2,7 +2,7 @@ import gunicorn.app.base
 from dj_static import Cling
 from django.core.wsgi import get_wsgi_application
 
-from configfactory.support import dirs
+from configfactory.support import appdir
 
 
 class ConfigFactoryServer(gunicorn.app.base.BaseApplication):
@@ -32,5 +32,5 @@ class ConfigFactoryServer(gunicorn.app.base.BaseApplication):
     def load(self):
         return Cling(
             application=self.wsgi_application,
-            base_dir=dirs.package_dir('static')
+            base_dir=appdir.package_dir('static')
         )
