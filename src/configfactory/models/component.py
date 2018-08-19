@@ -37,9 +37,6 @@ class Component(models.Model):
         verbose_name = _('component')
         verbose_name_plural = _('components')
         ordering = ('name',)
-        permissions = (
-            ('view_component', _('Can view component')),
-        )
 
     def __str__(self):
         return self.name
