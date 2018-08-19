@@ -12,6 +12,7 @@
 .penv/
 .eggs/
 .idea/
+venv/
 build/
 /dist/
 ideadb
