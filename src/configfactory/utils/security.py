@@ -10,22 +10,6 @@ from django.utils.functional import cached_property
 from configfactory.utils import dicthelper, json
 
 
-def cleanse(obj, hidden='password', substitute='*****'):
-
-    if isinstance(hidden, str):
-        hidden = hidden.split()
-
-    hidden_re = re.compile('|'.join(hidden), flags=re.IGNORECASE)
-
-    def _replace(value, key):
-        path = '.'.join(key)
-        if hidden_re.search(path):
-            return substitute
-        return value
-
-    return dicthelper.traverse(obj, _replace)
-
-
 class Encryptor(abc.ABC):
 
     @abc.abstractmethod
@@ -92,9 +76,9 @@ def is_encrypted(value: Any) -> bool:
     return isinstance(value, str) and value.startswith(settings.ENCRYPT_PREFIX)
 
 
-def encrypt_dict(data: dict, secured_keys: List[str]) -> dict:
+def encrypt_dict(data: dict, secure_keys: List[str]) -> dict:
 
-    hidden_re = re.compile('|'.join(secured_keys), flags=re.IGNORECASE)
+    hidden_re = re.compile('|'.join(secure_keys), flags=re.IGNORECASE)
 
     def _process(value: Any, key: List[str]) -> str:
 
@@ -111,9 +95,9 @@ def encrypt_dict(data: dict, secured_keys: List[str]) -> dict:
     return dicthelper.traverse(data, _process)
 
 
-def decrypt_dict(data: dict, secured_keys: List[str]) -> dict:
+def decrypt_dict(data: dict, secure_keys: List[str]) -> dict:
 
-    hidden_re = re.compile('|'.join(secured_keys), flags=re.IGNORECASE)
+    hidden_re = re.compile('|'.join(secure_keys), flags=re.IGNORECASE)
 
     def _process(value: Any, key: List[str]) -> Any:
 
@@ -127,3 +111,19 @@ def decrypt_dict(data: dict, secured_keys: List[str]) -> dict:
         return value
 
     return dicthelper.traverse(data, _process)
+
+
+def cleanse(data: dict, hidden='password', substitute='*****'):
+
+    if isinstance(hidden, str):
+        hidden = hidden.split()
+
+    hidden_re = re.compile('|'.join(hidden), flags=re.IGNORECASE)
+
+    def _replace(value, key):
+        path = '.'.join(key)
+        if hidden_re.search(path):
+            return substitute
+        return value
+
+    return dicthelper.traverse(data, _replace)

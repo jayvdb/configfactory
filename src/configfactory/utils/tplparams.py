@@ -37,9 +37,7 @@ def inject(data, params, strict=True, calls=0):
     # Check circular injections
     if calls > circular_threshold:
         if strict:
-            raise CircularInjectError(
-                'Circular injections detected.'
-            )
+            raise CircularInjectError('Circular injections detected.')
         return data
 
     # Replace data params
@@ -57,10 +55,7 @@ def inject(data, params, strict=True, calls=0):
                 return value
         except KeyError:
             if strict:
-                raise InjectKeyError(
-                    'Injection key `{key}` does not exist.'.format(key=key),
-                    key=key
-                )
+                raise InjectKeyError(f'Injection key `{key}` does not exist.', key=key)
 
     return inject(
         data=data,

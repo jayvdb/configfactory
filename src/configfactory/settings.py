@@ -288,7 +288,7 @@ if ENCRYPT_ENABLED:
         raise ImproperlyConfigured('Encrypt key must set and greater or equal to 32 symbols.')
 
 # Secured keys
-SECURE_KEYS = config.getlist('secured_keys', default=['pass', 'password'])
+SECURE_KEYS = config.getlist('secure_keys', default=['pass', 'password'])
 
 # ConfigStore settings
 CONFIGSTORE_BACKEND = config.get('configstore.backend', default='database')

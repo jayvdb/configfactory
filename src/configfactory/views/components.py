@@ -37,9 +37,8 @@ from configfactory.signals import (
     component_settings_updated,
     component_updated,
 )
-from configfactory.utils import dicthelper
+from configfactory.utils import dicthelper, security
 from configfactory.utils.db import model_to_dict
-from configfactory.utils.security import cleanse
 
 
 class ComponentCreateView(LoginRequiredMixin, ConfigStoreCachedMixin, CreateView):
@@ -291,8 +290,8 @@ class ComponentSettingsView(LoginRequiredMixin, ConfigStoreCachedMixin, DetailVi
             alias=self.kwargs['environment']
         )
 
-        settings_dict = cleanse(
-            obj=get_component_settings(
+        settings_dict = security.cleanse(
+            data=get_component_settings(
                 component=component,
                 environment=environment,
             ),

@@ -8,7 +8,7 @@ class SecurityUtilsTestCase(TestCase):
     def test_cleanse_hidden_match(self):
 
         actual = security.cleanse(
-            obj={
+            data={
                 'name': 'test',
                 'password': 'secret password',
                 'connection': {
@@ -58,12 +58,12 @@ class SecurityUtilsTestCase(TestCase):
         encrypted_dict = security.encrypt_dict({
             'user': 'admin',
             'pass': 'secret',
-        }, secured_keys=['pass'])
+        }, secure_keys=['pass'])
 
         assert encrypted_dict['user'] == 'admin'
         assert security.is_encrypted(encrypted_dict['pass'])
 
-        decrypted_dict = security.decrypt_dict(encrypted_dict, secured_keys=['pass'])
+        decrypted_dict = security.decrypt_dict(encrypted_dict, secure_keys=['pass'])
 
         assert decrypted_dict['user'] == 'admin'
         assert decrypted_dict['pass'] == 'secret'
@@ -76,12 +76,12 @@ class SecurityUtilsTestCase(TestCase):
                 'user': 'admin',
                 'pass': 'secret',
             }
-        }, secured_keys=['db.pass'])
+        }, secure_keys=['db.pass'])
 
         assert encrypted_dict['db']['user'] == 'admin'
         assert security.is_encrypted(encrypted_dict['db']['pass'])
 
-        decrypted_dict = security.decrypt_dict(encrypted_dict, secured_keys=['db.pass'])
+        decrypted_dict = security.decrypt_dict(encrypted_dict, secure_keys=['db.pass'])
 
         assert decrypted_dict['db']['user'] == 'admin'
         assert decrypted_dict['db']['pass'] == 'secret'
@@ -91,11 +91,11 @@ class SecurityUtilsTestCase(TestCase):
 
         encrypted_dict = security.encrypt_dict({
             'token': 123123123
-        }, secured_keys=['token'])
+        }, secure_keys=['token'])
 
         assert encrypted_dict['token']
 
-        decrypted_dict = security.decrypt_dict(encrypted_dict, secured_keys=['token'])
+        decrypted_dict = security.decrypt_dict(encrypted_dict, secure_keys=['token'])
 
         assert decrypted_dict['token'] == 123123123
 
@@ -104,12 +104,12 @@ class SecurityUtilsTestCase(TestCase):
 
         encrypted_dict = security.encrypt_dict({
             'tokens': [1, 2, 3]
-        }, secured_keys=['tokens'])
+        }, secure_keys=['tokens'])
 
         assert security.is_encrypted(encrypted_dict['tokens'][0])
         assert security.is_encrypted(encrypted_dict['tokens'][1])
         assert security.is_encrypted(encrypted_dict['tokens'][2])
 
-        decrypted_dict = security.decrypt_dict(encrypted_dict, secured_keys=['tokens'])
+        decrypted_dict = security.decrypt_dict(encrypted_dict, secure_keys=['tokens'])
 
         assert decrypted_dict['tokens'] == [1, 2, 3]

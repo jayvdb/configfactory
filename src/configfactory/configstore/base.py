@@ -71,7 +71,7 @@ class ConfigStore:
                 if decrypt:
                     all_data[environment][component] = security.decrypt_dict(
                         data=json.loads(data),
-                        secured_keys=self.secure_keys
+                        secure_keys=self.secure_keys
                     )
                 else:
                     all_data[environment][component] = json.loads(data)
@@ -143,7 +143,7 @@ class ConfigStore:
             raise TypeError("`settings` must be dict type.")
 
         if self.encrypt_enabled:
-            data = security.encrypt_dict(data, secured_keys=self.secure_keys)
+            data = security.encrypt_dict(data, secure_keys=self.secure_keys)
 
         self.backend.update_data(
             environment=environment,
