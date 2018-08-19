@@ -2,7 +2,8 @@ import atexit
 import shutil
 import tempfile
 
-from configfactory.settings import *
+# noinspection PyUnresolvedReferences
+from configfactory.settings import *  # noqa
 
 TMP_ROOT = tempfile.mkdtemp(prefix='configfactory_')
 
@@ -42,10 +43,7 @@ ENCRYPT_ENABLED = False
 ###########################################
 # Config store settings
 ###########################################
-CONFIG_STORE = {
-    'backend': 'database',
-    'options': {}
-}
+
 
 ######################################
 # Environments settings

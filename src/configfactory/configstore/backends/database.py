@@ -1,5 +1,3 @@
-from typing import Optional
-
 from configfactory.models import Config
 
 from .base import ConfigStoreBackend

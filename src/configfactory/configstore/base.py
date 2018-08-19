@@ -1,8 +1,8 @@
 import contextlib
 import threading
-from typing import Dict, Union
+from typing import Dict, Union, List
 
-from django.conf import settings
+# from django.conf import settings
 from django.utils.functional import cached_property
 
 from configfactory.models import Component, Environment
@@ -22,18 +22,23 @@ class ConfigStore:
         'database': DatabaseConfigStore
     }
 
-    def __init__(self, backend: ConfigStoreBackend):
-        self.backend = backend
+    def __init__(self, backend: ConfigStoreBackend, encrypt_enabled: bool=False, secure_keys: List[str]=None):
+        self._backend = backend
+        self._encrypt_enabled = encrypt_enabled
+        self._secure_keys = secure_keys or []
         self._cache = threading.local()
 
-    @classmethod
-    def configure(cls) -> 'ConfigStore':
-        backend_class = cls.backend_registry[settings.CONFIGSTORE_BACKEND]
-        if settings.CONFIGSTORE_OPTIONS:
-            backend = backend_class(**settings.CONFIGSTORE_OPTIONS)
-        else:
-            backend = backend_class()
-        return ConfigStore(backend)
+    @property
+    def backend(self) -> ConfigStoreBackend:
+        return self._backend
+
+    @property
+    def encrypt_enabled(self) -> bool:
+        return self._encrypt_enabled
+
+    @property
+    def secure_keys(self) -> List[str]:
+        return self._secure_keys
 
     @contextlib.contextmanager
     def cachecontext(self):
@@ -48,7 +53,7 @@ class ConfigStore:
     def base_environment(self) -> Environment:
         return Environment.objects.base().get()
 
-    def all(self, decrypt: bool = True) -> Dict[str, Dict[str, dict]]:
+    def all(self, decrypt: bool=True) -> Dict[str, Dict[str, dict]]:
         """
         Get all settings.
         """
@@ -66,7 +71,7 @@ class ConfigStore:
                 if decrypt:
                     all_data[environment][component] = security.decrypt_dict(
                         data=json.loads(data),
-                        secured_keys=settings.SECURED_KEYS
+                        secured_keys=self.secure_keys
                     )
                 else:
                     all_data[environment][component] = json.loads(data)
@@ -137,8 +142,8 @@ class ConfigStore:
         if not isinstance(data, dict):
             raise TypeError("`settings` must be dict type.")
 
-        if settings.ENCRYPT_ENABLED:
-            data = security.encrypt_dict(data, secured_keys=settings.SECURED_KEYS)
+        if self.encrypt_enabled:
+            data = security.encrypt_dict(data, secured_keys=self.secure_keys)
 
         self.backend.update_data(
             environment=environment,
@@ -165,16 +170,16 @@ class ConfigStore:
         """
 
         for environment, components_data in self.all().items():
-            for component, settings in components_data.items():
+            for component, data in components_data.items():
                 if not Environment.objects.filter(alias=environment).exists():
                     self.backend.delete_data(environment=environment, component=component)
                     continue
                 if not Component.objects.filter(alias=component).exists():
                     self.backend.delete_data(environment=environment, component=component)
                     continue
-                self.update(environment, component, data=settings)
+                self.update(environment, component, data=data)
 
-    def ikeys(self, environment: Environment, component: Component = None, data: dict = None):
+    def ikeys(self, environment: Environment, component: Component=None, data: dict=None):
         """
         Get components inject keys.
         """

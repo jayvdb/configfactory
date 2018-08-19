@@ -296,7 +296,7 @@ class ComponentSettingsView(LoginRequiredMixin, ConfigStoreCachedMixin, DetailVi
                 component=component,
                 environment=environment,
             ),
-            hidden=settings.SECURED_KEYS,
+            hidden=settings.SECURE_KEYS,
         )
 
         settings_dict = dicthelper.flatten(settings_dict)
