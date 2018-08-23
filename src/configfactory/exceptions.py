@@ -1,3 +1,6 @@
+from django.core.exceptions import ValidationError
+
+
 class InjectKeyError(Exception):
 
     def __init__(self, message: str, key: str):
@@ -20,14 +23,8 @@ class CircularInjectError(RuntimeError):
     pass
 
 
-class ComponentValidationError(Exception):
-
-    def __init__(self, message, exc=None):
-        self.message = message
-        self.exc = exc
-
-    def __str__(self):
-        return self.message
+class InvalidSettingsError(ValidationError):
+    pass
 
 
 class ComponentDeleteError(Exception):

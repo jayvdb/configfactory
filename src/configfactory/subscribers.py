@@ -8,12 +8,8 @@ from django.dispatch import receiver
 
 from configfactory.models import Backup, Component, Environment, User
 from configfactory.models.api_settings import APISettings
-from configfactory.services.api_settings import generate_api_token
-from configfactory.services.components import (
-    get_component_settings,
-    prepare_component_settings_data,
-    update_component_settings,
-)
+from configfactory.services.apisettings import generate_api_token
+from configfactory.services.configsettings import get_settings, update_settings
 from configfactory.services.logs import (
     log_action,
     log_create_object,
@@ -193,29 +189,34 @@ def component_alias_changed_handler(sender, component: Component, old_alias: str
 
     for environment in Environment.objects.all():
 
-        settings_copy = copy.deepcopy(get_component_settings(
+        data_copy = copy.deepcopy(get_settings(
+            environment=environment,
             component=old_alias,
-            environment=environment
         ))
 
-        update_component_settings(
-            component=component,
+        update_settings(
             environment=environment,
-            settings=settings_copy,
-            skip_validation=True
+            component=component,
+            data=data_copy,
+            run_validation=False
         )
 
 
 @receiver(component_settings_updated, sender=Component)
-def component_settings_updated_handler(sender, component, environment, old_data, **kwargs):
+def component_settings_updated_handler(sender, component, environment, prev_settings: dict, **kwargs):
 
     log_update_object(
         instance=component,
-        old_data=old_data,
-        new_data=prepare_component_settings_data(
-            component=component,
-            environment=environment
-        ),
+        old_data={
+            'settings': {
+                environment.alias: prev_settings
+            }
+        },
+        new_data={
+            'settings': {
+                environment.alias: get_settings(environment=environment, component=component)
+            }
+        },
         user=kwargs.get('user'),
     )
 

@@ -25,7 +25,7 @@ INTERNAL_IPS = ['127.0.0.1']
 ###########################################
 DATABASES = {
     'default': dj_database_url.config(
-        env='CONFIGFACTORY_DATABASE_URL',
+        env='CONFIGFACTORY_DATABASE_URI',
         default=config['database.url']
     )
 }
@@ -129,8 +129,6 @@ MEDIA_ROOT = config.get('data_dir', default=appdir.var_dir('data'))
 LOGGING_DIR = config.get('logging.directory', appdir.var_dir('log'))
 
 LOGGING_FILENAME = config.get('logging.filename', 'configfactory.log')
-
-print(LOGGING_DIR)
 
 LOGGING = {
     'version': 1,

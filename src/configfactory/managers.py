@@ -1,6 +1,6 @@
 from django.db import models
 
-from configfactory.shortcuts import get_base_environment_alias
+from configfactory.shortcuts import get_base_environment
 
 
 class EnvironmentQuerySet(models.QuerySet):
@@ -9,10 +9,10 @@ class EnvironmentQuerySet(models.QuerySet):
         return self.filter(is_active=True)
 
     def base(self):
-        return self.filter(alias=get_base_environment_alias())
+        return self.filter(alias=get_base_environment())
 
     def non_base(self):
-        return self.exclude(alias=get_base_environment_alias())
+        return self.exclude(alias=get_base_environment())
 
 
 class EnvironmentManager(models.Manager):

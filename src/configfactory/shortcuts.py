@@ -3,11 +3,15 @@ from django.shortcuts import resolve_url
 from django.urls import NoReverseMatch
 
 
-def get_base_environment_alias():
+def get_base_environment() -> str:
     return settings.BASE_ENVIRONMENT
 
 
-def back_url(to, request=None, *args, **kwargs):
+def is_base_environment(environment: str) -> bool:
+    return get_base_environment() == environment
+
+
+def back_url(to, request=None, *args, **kwargs) -> str:
     try:
         default_url = resolve_url(to, *args, **kwargs)
     except NoReverseMatch:

@@ -1,4 +1,5 @@
 import re
+from typing import Any
 
 from configfactory.exceptions import CircularInjectError, InjectKeyError
 from configfactory.utils import dicthelper

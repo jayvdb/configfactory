@@ -1,6 +1,6 @@
 from django.contrib.auth.mixins import UserPassesTestMixin
 
-from configfactory import configstore
+from configfactory.services.configsettings import use_cached_settings
 
 
 class SuperuserRequiredMixin(UserPassesTestMixin):
@@ -14,5 +14,5 @@ class SuperuserRequiredMixin(UserPassesTestMixin):
 class ConfigStoreCachedMixin:
 
     def dispatch(self, request, *args, **kwargs):
-        with configstore.cachecontext():
+        with use_cached_settings():
             return super().dispatch(request, *args, **kwargs)

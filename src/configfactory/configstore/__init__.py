@@ -1,10 +1,10 @@
+from django.conf import settings
 from django.utils.functional import LazyObject
 
-from configfactory import settings
 from configfactory.configstore.backends.database import DatabaseConfigStore
 from configfactory.configstore.backends.filesystem import FileSystemConfigStore
 from configfactory.configstore.backends.memory import MemoryConfigStore
-from configfactory.configstore.base import ConfigStore
+from configfactory.configstore.base import ConfigStore, ConfigStoreBackend
 
 from .base import ConfigStore
 
@@ -33,11 +33,8 @@ class ConfigStoreHandler(LazyObject):
 # Set default config store
 _instance: ConfigStore = ConfigStoreHandler()
 backend = _instance.backend
-cachecontext = _instance.cachecontext
 all_data = _instance.all
 env = _instance.env
 get = _instance.get
 update = _instance.update
-delete = _instance.delete
 normalize = _instance.normalize
-ikeys = _instance.ikeys

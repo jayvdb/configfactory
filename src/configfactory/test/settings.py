@@ -43,7 +43,7 @@ ENCRYPT_ENABLED = False
 ###########################################
 # Config store settings
 ###########################################
-
+CONFIGSTORE_BACKEND = 'database'
 
 ######################################
 # Environments settings

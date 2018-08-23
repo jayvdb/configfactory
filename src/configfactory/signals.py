@@ -26,7 +26,7 @@ component_alias_changed = Signal(providing_args=['component', 'old_alias', 'new_
 
 component_deleted = Signal(providing_args=['component'])
 
-component_settings_updated = Signal(providing_args=['component', 'environment', 'old_data'])
+component_settings_updated = Signal(providing_args=['component', 'environment', 'prev_settings'])
 
 backup_created = Signal(providing_args=['backup'])
 

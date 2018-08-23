@@ -1,6 +1,6 @@
 import contextlib
 import threading
-from typing import Dict, Union, List
+from typing import Dict, Union, List, Set
 
 # from django.conf import settings
 from django.utils.functional import cached_property
@@ -78,12 +78,14 @@ class ConfigStore:
 
         return all_data
 
-    def env(self, environment: Environment) -> dict:
+    def env(self, environment: Union[Environment, str]) -> dict:
         """
         Get environment settings.
         """
+        if isinstance(environment, Environment):
+            environment = environment.alias
         try:
-            return self.all()[environment.alias]
+            return self.all()[environment]
         except KeyError:
             return {}
 
@@ -179,7 +181,7 @@ class ConfigStore:
                     continue
                 self.update(environment, component, data=data)
 
-    def ikeys(self, environment: Environment, component: Component=None, data: dict=None):
+    def get_inject_keys(self, environment: str, component: str=None, data: dict=None) -> Dict[str, Set[str]]:
         """
         Get components inject keys.
         """

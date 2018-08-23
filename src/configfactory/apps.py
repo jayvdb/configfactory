@@ -22,9 +22,10 @@ class ConfigFactoryConfig(AppConfig):
         self.module.autodiscover()
 
     def _rename_db_tables(self):
+        pass
 
-        for model in apps.get_models():
-            set_db_table(model)
-
-        pre_init.connect(set_db_table)
-        class_prepared.connect(set_db_table)
+        # for model in apps.get_models():
+        #     set_db_table(model)
+        #
+        # pre_init.connect(set_db_table)
+        # class_prepared.connect(set_db_table)

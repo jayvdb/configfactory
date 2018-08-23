@@ -4,11 +4,11 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
-from configfactory.exceptions import ComponentValidationError
+from configfactory.exceptions import InvalidSettingsError
 from configfactory.forms.fields import JSONField
 from configfactory.forms.layout import Back
 from configfactory.models import Component
-from configfactory.services.components import validate_component_settings
+from configfactory.services.configsettings import validate_settings
 from configfactory.shortcuts import back_url
 
 
@@ -67,12 +67,12 @@ class ComponentSettingsForm(forms.Form):
         data = self.cleaned_data['settings']
 
         try:
-            validate_component_settings(
-                component=self.component,
+            validate_settings(
                 environment=self.environment,
-                settings=data,
+                component=self.component,
+                data=data,
             )
-        except ComponentValidationError as exc:
+        except InvalidSettingsError as exc:
             raise ValidationError(str(exc))
 
         return data

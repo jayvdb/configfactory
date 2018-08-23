@@ -1,5 +1,4 @@
 import click
-from art import text2art
 from django.utils.module_loading import import_string
 
 from configfactory.support import appenv

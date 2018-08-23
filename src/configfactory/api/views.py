@@ -7,10 +7,10 @@ from django.views import View
 
 from configfactory.mixins import ConfigStoreCachedMixin
 from configfactory.models import Component, Environment
-from configfactory.services.components import (
-    get_component_settings,
+from configfactory.services.configsettings import (
     get_environment_settings,
-    inject_params,
+    get_settings,
+    inject_settings_params,
 )
 from configfactory.utils import dicthelper
 
@@ -47,9 +47,9 @@ class ComponentsAPIView(ConfigStoreCachedMixin, View):
         if flatten:
             data = dicthelper.flatten(data)
 
-        data = inject_params(
+        data = inject_settings_params(
             environment=environment,
-            settings=data,
+            data=data,
             components=components,
             strict=False
         )
@@ -65,9 +65,9 @@ class ComponentSettingsAPIView(ConfigStoreCachedMixin, View):
         environment = get_object_or_404(Environment, alias=environment)
         flatten = _get_flatten_param(request)
 
-        data = get_component_settings(
-            component=component,
+        data = get_settings(
             environment=environment,
+            component=component,
         )
 
         if flatten:

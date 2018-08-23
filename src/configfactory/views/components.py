@@ -23,14 +23,13 @@ from configfactory.forms.component import (
 )
 from configfactory.mixins import ConfigStoreCachedMixin
 from configfactory.models import Component
-from configfactory.services.components import (
-    delete_component,
-    get_component_settings,
-    inject_params,
-    prepare_component_settings_data,
-    update_component_settings,
+from configfactory.services.components import delete_component
+from configfactory.services.configsettings import (
+    get_settings,
+    inject_settings_params,
+    update_settings,
 )
-from configfactory.shortcuts import get_base_environment_alias
+from configfactory.shortcuts import get_base_environment
 from configfactory.signals import (
     component_created,
     component_deleted,
@@ -259,7 +258,7 @@ class ComponentSettingsRedirectView(RedirectView):
     def get_redirect_url(self, *args, **kwargs):
         return reverse('component_settings', kwargs={
             'alias': kwargs['alias'],
-            'environment': get_base_environment_alias()
+            'environment': get_base_environment()
         })
 
 
@@ -291,17 +290,17 @@ class ComponentSettingsView(LoginRequiredMixin, ConfigStoreCachedMixin, DetailVi
         )
 
         settings_dict = security.cleanse(
-            data=get_component_settings(
-                component=component,
+            data=get_settings(
                 environment=environment,
+                component=component,
             ),
             hidden=settings.SECURE_KEYS,
         )
 
         settings_dict = dicthelper.flatten(settings_dict)
-        settings_dict = inject_params(
+        settings_dict = inject_settings_params(
             environment=environment,
-            settings=settings_dict,
+            data=settings_dict,
             components=self.request.components,
             strict=False
         )
@@ -355,9 +354,9 @@ class ComponentSettingsUpdateView(LoginRequiredMixin, ConfigStoreCachedMixin, Up
 
     @cached_property
     def settings_dict(self):
-        return get_component_settings(
-            component=self.object,
+        return get_settings(
             environment=self.environment,
+            component=self.object,
         )
 
     def get_context_data(self, **kwargs):
@@ -393,17 +392,17 @@ class ComponentSettingsUpdateView(LoginRequiredMixin, ConfigStoreCachedMixin, Up
 
         component: Component = self.object
 
-        old_data = prepare_component_settings_data(
+        prev_settings = get_settings(
+            environment=self.environment,
             component=component,
-            environment=self.environment
         )
 
         # Update store settings
-        update_component_settings(
-            component=component,
+        update_settings(
             environment=self.environment,
-            settings=form.cleaned_data['settings'],
-            skip_validation=True
+            component=component,
+            data=form.cleaned_data['settings'],
+            run_validation=False
         )
 
         # Notify about updated component settings
@@ -411,7 +410,7 @@ class ComponentSettingsUpdateView(LoginRequiredMixin, ConfigStoreCachedMixin, Up
             sender=Component,
             component=component,
             environment=self.environment,
-            old_data=old_data,
+            prev_settings=prev_settings,
             user=self.request.user
         )
 

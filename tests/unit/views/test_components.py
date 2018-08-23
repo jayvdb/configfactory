@@ -1,7 +1,7 @@
 from django.test import TestCase
 
 from configfactory.models import Component
-from configfactory.services.components import get_component_settings
+from configfactory.services.configsettings import get_settings
 from configfactory.test.factories import (
     ComponentFactory,
     EnvironmentFactory,
@@ -57,7 +57,7 @@ class ComponentsViewsTestCase(TestCase):
 
         self.assertRedirects(response, '/components/database/base/edit/')
 
-        settings_dict = get_component_settings(component, environment=development)
+        settings_dict = get_settings(environment=development, component=component)
 
         assert settings_dict == {
             'host': 'localhost',
