@@ -1,14 +1,14 @@
 from typing import Optional
 
-from .base import ConfigStoreBackend
+from .abc import ConfigStore
 
 
-class MemoryConfigStore(ConfigStoreBackend):
+class MemoryConfigStore(ConfigStore):
 
     def __init__(self):
         self._settings = {}
 
-    def all_data(self) -> dict:
+    def get_all_data(self) -> dict:
         return self._settings
 
     def get_data(self, environment: str, component: str) -> Optional[dict]:

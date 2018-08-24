@@ -5,38 +5,17 @@ from typing import Dict, Iterable, Set, Union
 import dictdiffer
 import jsonschema
 from django.conf import settings
-from django.utils.functional import LazyObject
 from django.utils.translation import ugettext_lazy as _
 
-from configfactory.configstore import (
-    ConfigStoreBackend,
-    DatabaseConfigStore,
-    FileSystemConfigStore,
-    MemoryConfigStore,
+from configfactory import configstore
+from configfactory.exceptions import (
+    CircularInjectError,
+    InjectKeyError,
+    InvalidSettingsError,
 )
-from configfactory.exceptions import InvalidSettingsError, InjectKeyError, CircularInjectError
 from configfactory.models import Component, Environment
 from configfactory.utils import dicthelper, json, security, tplparams
 
-
-class LazyConfigStoreBackend(LazyObject):
-
-    registry = {
-        'memory': MemoryConfigStore,
-        'filesystem': FileSystemConfigStore,
-        'database': DatabaseConfigStore
-    }
-
-    def _setup(self):
-        klass = self.registry[settings.CONFIGSTORE_BACKEND]
-        if settings.CONFIGSTORE_OPTIONS:
-            instance = klass(**settings.CONFIGSTORE_OPTIONS)
-        else:
-            instance = klass()
-        self._wrapped = instance
-
-
-_store: ConfigStoreBackend = LazyConfigStoreBackend()
 _cached_settings = threading.local()
 _cached_settings_key = 'settings'
 
@@ -48,30 +27,26 @@ def use_cached_settings():
     delattr(_cached_settings, _cached_settings_key)
 
 
-def get_all_settings(decrypt: bool = True):
+def get_all_settings() -> Dict[str, Dict[str, dict]]:
+    """
+    Get all settings.
+    """
 
     if hasattr(_cached_settings, _cached_settings_key):
         return getattr(_cached_settings, _cached_settings_key)
 
-    ret = {}
+    all_data = configstore.get_all_data()
 
-    for environment, component_data in _store.all_data().items():
+    if settings.ENCRYPT_ENABLED:
+        return security.decrypt_dict(data=all_data, secure_keys=settings.SECURE_KEYS)
 
-        ret[environment] = {}
-
-        for component, data in component_data.items():
-            if decrypt:
-                ret[environment][component] = security.decrypt_dict(
-                    data=json.loads(data),
-                    secure_keys=settings.SECURE_KEYS
-                )
-            else:
-                ret[environment][component] = json.loads(data)
-
-    return ret
+    return all_data
 
 
 def get_environment_settings(environment: Environment, components: Iterable[Component] = None) -> dict:
+    """
+    Get environment settings.
+    """
 
     if components is None:
         components = Component.objects.all()
@@ -231,11 +206,7 @@ def update_settings(environment: Environment, component: Component, data: dict, 
     if settings.ENCRYPT_ENABLED:
         data = security.encrypt_dict(data, secure_keys=settings.SECURE_KEYS)
 
-    _store.update_data(
-        environment=environment.alias,
-        component=component.alias,
-        data=json.dumps(data, compress=True)
-    )
+    configstore.update_data(environment=environment.alias, component=component.alias, data=data)
 
 
 def inject_settings_params(
@@ -264,7 +235,22 @@ def delete_settings(environment: Environment, component: Component):
     """
     Delete settings from store.
     """
-    _store.delete_data(environment=environment.alias, component=component.alias)
+    configstore.delete_data(environment=environment.alias, component=component.alias)
+
+
+def cleanup_settings():
+    """
+    Cleanup settings.
+    """
+    for environment, components_data in configstore.get_all_data().items():
+        for component, data in components_data.items():
+            if not Environment.objects.filter(alias=environment).exists():
+                configstore.delete_data(environment=environment, component=component)
+                continue
+            if not Component.objects.filter(alias=component).exists():
+                configstore.delete_data(environment=environment, component=component)
+                continue
+            configstore.update_data(environment=environment, component=component, data=data)
 
 
 def get_settings_inject_keys(

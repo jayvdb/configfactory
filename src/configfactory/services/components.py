@@ -3,7 +3,10 @@ from guardian.shortcuts import get_objects_for_user
 
 from configfactory.exceptions import ComponentDeleteError
 from configfactory.models import Component, Environment, User
-from configfactory.services.configsettings import get_settings_inject_keys, delete_settings
+from configfactory.services.configsettings import (
+    delete_settings,
+    get_settings_inject_keys,
+)
 
 
 def get_user_components(user: User):

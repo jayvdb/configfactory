@@ -1,11 +1,11 @@
 from configfactory.models import Config
 
-from .base import ConfigStoreBackend
+from .abc import ConfigStore
 
 
-class DatabaseConfigStore(ConfigStoreBackend):
+class DatabaseConfigStore(ConfigStore):
 
-    def all_data(self) -> dict:
+    def get_all_data(self) -> dict:
         settings = {}
         for config in Config.objects.all():
             if config.environment not in settings:

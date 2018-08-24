@@ -17,7 +17,7 @@ def create_backup(user: User = None, comment: str = None) -> Backup:
     data = {
         'environments': [],
         'components': [],
-        'configs': configstore.all_data(decrypt=False),
+        'configs': configstore.get_all_data(),
     }
 
     for environment in Environment.objects.order_by('pk'):
@@ -142,7 +142,11 @@ def load_backup(backup: Backup, user: User = None):
 
     for environment, component_data in data.get('configs', {}).items():
         for component, data in component_data.items():
-            configstore.update(environment, component, data=data)
+            configstore.update_data(
+                environment=environment,
+                component=component,
+                data=data,
+            )
 
     # Notify about loaded backup
     backup_loaded.send(sender=Backup, backup=backup, user=user)

@@ -1,15 +1,16 @@
+from typing import Dict
+
 from django.conf import settings
 from django.utils.functional import LazyObject
 
-from configfactory.configstore.backends.database import DatabaseConfigStore
-from configfactory.configstore.backends.filesystem import FileSystemConfigStore
-from configfactory.configstore.backends.memory import MemoryConfigStore
-from configfactory.configstore.base import ConfigStore, ConfigStoreBackend
+from configfactory.configstore.abc import ConfigStore
+from configfactory.configstore.database import DatabaseConfigStore
+from configfactory.configstore.filesystem import FileSystemConfigStore
+from configfactory.configstore.memory import MemoryConfigStore
+from configfactory.utils import json
 
-from .base import ConfigStore
 
-
-class ConfigStoreHandler(LazyObject):
+class LazyConfigStore(LazyObject):
 
     registry = {
         'memory': MemoryConfigStore,
@@ -18,23 +19,33 @@ class ConfigStoreHandler(LazyObject):
     }
 
     def _setup(self):
-        backend_class = self.registry[settings.CONFIGSTORE_BACKEND]
+        klass = self.registry[settings.CONFIGSTORE_BACKEND]
         if settings.CONFIGSTORE_OPTIONS:
-            backend_instance = backend_class(**settings.CONFIGSTORE_OPTIONS)
+            instance = klass(**settings.CONFIGSTORE_OPTIONS)
         else:
-            backend_instance = backend_class()
-        self._wrapped = ConfigStore(
-            backend=backend_instance,
-            encrypt_enabled=settings.ENCRYPT_ENABLED,
-            secure_keys=settings.SECURE_KEYS
-        )
+            instance = klass()
+        self._wrapped = instance
 
 
-# Set default config store
-_instance: ConfigStore = ConfigStoreHandler()
-backend = _instance.backend
-all_data = _instance.all
-env = _instance.env
-get = _instance.get
-update = _instance.update
-normalize = _instance.normalize
+_store: ConfigStore = LazyConfigStore()
+
+
+def get_all_data() -> Dict[str, Dict[str, dict]]:
+    ret = {}
+    for environment, component_data in _store.get_all_data().items():
+        ret[environment] = {}
+        for component, data in component_data.items():
+            ret[environment][component] = json.loads(data)
+    return ret
+
+
+def update_data(environment: str, component: str, data: dict):
+    _store.update_data(
+        environment=environment,
+        component=component,
+        data=json.dumps(data, compress=True)
+    )
+
+
+def delete_data(environment: str, component: str):
+    _store.delete_data(environment=environment, component=component)

@@ -1,15 +1,15 @@
 import os
 
-from .base import ConfigStoreBackend
+from .abc import ConfigStore
 
 
-class FileSystemConfigStore(ConfigStoreBackend):
+class FileSystemConfigStore(ConfigStore):
 
     def __init__(self, directory: str):
         self.directory = directory
         os.makedirs(self.directory, exist_ok=True)
 
-    def all_data(self) -> dict:
+    def get_all_data(self) -> dict:
 
         settings = {}
 

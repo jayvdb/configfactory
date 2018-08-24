@@ -2,10 +2,10 @@ import abc
 from typing import Dict
 
 
-class ConfigStoreBackend(abc.ABC):
+class ConfigStore(abc.ABC):
 
     @abc.abstractmethod
-    def all_data(self) -> Dict[str, Dict[str, str]]:
+    def get_all_data(self) -> Dict[str, Dict[str, str]]:
         pass
 
     @abc.abstractmethod
