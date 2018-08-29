@@ -30,6 +30,10 @@ class LazyConfigStore(LazyObject):
 _store: ConfigStore = LazyConfigStore()
 
 
+#########################################
+# Public API
+#########################################
+
 def get_all_data() -> Dict[str, Dict[str, dict]]:
     ret = {}
     for environment, component_data in _store.get_all_data().items():

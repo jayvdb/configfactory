@@ -23,7 +23,7 @@ class Encryptor(abc.ABC):
 
 class FernetDataEncryptor(Encryptor):
 
-    def __init__(self, encode_key):
+    def __init__(self, encode_key: str):
         self.encode_key = encode_key
 
     @cached_property
@@ -76,7 +76,10 @@ def is_encrypted(value: Any) -> bool:
     return isinstance(value, str) and value.startswith(settings.ENCRYPT_PREFIX)
 
 
-def encrypt_dict(data: dict, secure_keys: List[str]) -> dict:
+def encrypt(data: dict, secure_keys: List[str]) -> dict:
+
+    if not secure_keys:
+        return data
 
     hidden_re = re.compile('|'.join(secure_keys), flags=re.IGNORECASE)
 
@@ -95,7 +98,7 @@ def encrypt_dict(data: dict, secure_keys: List[str]) -> dict:
     return dicthelper.traverse(data, _process)
 
 
-def decrypt_dict(data: dict, secure_keys: List[str]) -> dict:
+def decrypt(data: dict, secure_keys: List[str]) -> dict:
 
     hidden_re = re.compile('|'.join(secure_keys), flags=re.IGNORECASE)
 

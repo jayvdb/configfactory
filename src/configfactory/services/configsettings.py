@@ -38,7 +38,7 @@ def get_all_settings() -> Dict[str, Dict[str, dict]]:
     all_data = configstore.get_all_data()
 
     if settings.ENCRYPT_ENABLED:
-        return security.decrypt_dict(data=all_data, secure_keys=settings.SECURE_KEYS)
+        return security.decrypt(data=all_data, secure_keys=settings.SECURE_KEYS)
 
     return all_data
 
@@ -204,7 +204,7 @@ def update_settings(environment: Environment, component: Component, data: dict, 
         )
 
     if settings.ENCRYPT_ENABLED:
-        data = security.encrypt_dict(data, secure_keys=settings.SECURE_KEYS)
+        data = security.encrypt(data, secure_keys=settings.SECURE_KEYS)
 
     configstore.update_data(environment=environment.alias, component=component.alias, data=data)
 
