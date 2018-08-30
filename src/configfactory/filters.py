@@ -19,4 +19,4 @@ class LogEntryFilterSet(FilterSet):
 
     class Meta:
         model = LogEntry
-        fields = ['user', 'content_type', 'object_id']
+        fields = ['user', 'content_type', 'object_id', 'action_type']

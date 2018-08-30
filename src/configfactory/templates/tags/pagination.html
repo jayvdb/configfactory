@@ -3,33 +3,49 @@
 {% if page_obj and page_obj.paginator.num_pages > 1 %}
     <div {% if pid %}id="{{ pid }}"{% endif %} class="paginator {% if position %}pull-{{ position }}{% endif %}">
         <ul class="pagination pagination-{{ size|default_if_none:'sm' }} inline">
-            {% ifnotequal page_obj.number 1 %}
-                <li>
-                    <a href="?{% query_params request page=1 %}" class="prev">&lsaquo;&lsaquo;</a>
-                </li>
-            {% endifnotequal %}
+            {% if not next_prev_only %}
+                {% ifnotequal page_obj.number 1 %}
+                    <li>
+                        <a href="?{% query_params request page=1 %}">&lsaquo;&lsaquo;</a>
+                    </li>
+                {% endifnotequal %}
+            {% endif %}
             {% if page_obj.has_previous %}
                 <li>
-                    <a href="?{% query_params request page=page_obj.previous_page_number %}" class="prev">&lsaquo;</a>
+                    <a href="?{% query_params request page=page_obj.previous_page_number %}">
+                        &lsaquo;
+                        {% if next_prev_only %}
+                            {% trans 'Previous' %}
+                        {% endif %}
+                    </a>
                 </li>
             {% endif %}
-            {% for page in page_obj.paginator.page_range %}
-                {% ifequal page page_obj.number %}
-                    <li class="active"><a href="javascript:" class="disabled">{{ page }}</a></li>
-                {% else %}
-                    <li><a href="?{% query_params request page=page %}">{{ page }}</a></li>
-                {% endifequal %}
-            {% endfor %}
+            {% if not next_prev_only %}
+                {% for page in page_obj.paginator.page_range %}
+                    {% ifequal page page_obj.number %}
+                        <li class="active"><a href="javascript:" class="disabled">{{ page }}</a></li>
+                    {% else %}
+                        <li><a href="?{% query_params request page=page %}">{{ page }}</a></li>
+                    {% endifequal %}
+                {% endfor %}
+            {% endif %}
             {% if page_obj.has_next %}
                 <li>
-                    <a href="?{% query_params request page=page_obj.next_page_number %}" class="next">&rsaquo;</a>
+                    <a href="?{% query_params request page=page_obj.next_page_number %}">
+                        {% if next_prev_only %}
+                            {% trans 'Next' %}
+                        {% endif %}
+                        &rsaquo;
+                    </a>
                 </li>
             {% endif %}
-            {% ifnotequal page_obj.number page_obj.paginator.num_pages %}
-                <li>
-                    <a href="?{% query_params request page=page_obj.paginator.num_pages %}" class="prev">&rsaquo;&rsaquo;</a>
-                </li>
-            {% endifnotequal %}
+            {% if not next_prev_only %}
+                {% ifnotequal page_obj.number page_obj.paginator.num_pages %}
+                    <li>
+                        <a href="?{% query_params request page=page_obj.paginator.num_pages %}">&rsaquo;&rsaquo;</a>
+                    </li>
+                {% endifnotequal %}
+            {% endif %}
         </ul>
     </div>
 {% endif %}

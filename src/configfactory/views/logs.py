@@ -16,7 +16,7 @@ class LogEntryListView(SuperuserRequiredMixin, FilterView):
 
     context_object_name = 'logs'
 
-    paginate_by = 50
+    paginate_by = 1
 
 
 class LogEntryDetailView(SuperuserRequiredMixin, DetailView):

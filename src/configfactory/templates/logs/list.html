@@ -8,16 +8,20 @@
         <form action="">
             <div class="row">
                 {% if current_user.is_superuser %}
-                    <div class="col-md-4">
+                    <div class="col-md-3">
                         {{ filter.form.user.label_tag }}
                         {% crispy_field filter.form.user %}
                     </div>
                 {% endif %}
-                <div class="col-md-4">
+                <div class="col-md-3">
+                    {{ filter.form.action_type.label_tag }}
+                    {% crispy_field filter.form.action_type %}
+                </div>
+                <div class="col-md-3">
                     {{ filter.form.content_type.label_tag }}
                     {% crispy_field filter.form.content_type %}
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                     {{ filter.form.object_id.label_tag }}
                     {% crispy_field filter.form.object_id %}
                 </div>
@@ -63,5 +67,5 @@
             {% endfor %}
         </tbody>
     </table>
-    {% pagination request page_obj %}
+    {% pagination request page_obj next_prev_only=True %}
 {% endblock %}
