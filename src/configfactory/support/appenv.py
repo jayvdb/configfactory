@@ -24,7 +24,7 @@ def is_development() -> bool:
     return get_env() == ENV_DEVELOPMENT
 
 
-def set_env_development_defaults():
+def set_development_defaults():
     """
     Set development environment defaults.
     """
@@ -34,7 +34,7 @@ def set_env_development_defaults():
     os.environ.setdefault(VAR_CONFIG, appdir.root_dir('configfactory.ini'))
 
 
-def set_env_production_defaults():
+def set_production_defaults():
     """
     Set development environment defaults.
     """

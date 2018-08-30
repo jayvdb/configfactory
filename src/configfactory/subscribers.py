@@ -23,7 +23,6 @@ from configfactory.signals import (
     component_alias_changed,
     component_created,
     component_deleted,
-    component_settings_updated,
     component_updated,
     environment_created,
     environment_deleted,
@@ -31,6 +30,7 @@ from configfactory.signals import (
     group_created,
     group_deleted,
     group_updated,
+    settings_updated,
     user_created,
     user_deleted,
     user_updated,
@@ -202,19 +202,19 @@ def component_alias_changed_handler(sender, component: Component, old_alias: str
         )
 
 
-@receiver(component_settings_updated, sender=Component)
-def component_settings_updated_handler(sender, component, environment, prev_settings: dict, **kwargs):
+@receiver(settings_updated, sender=Component)
+def settings_updated_handler(sender, component, environment, old_settings: dict, new_settings: dict, **kwargs):
 
     log_update_object(
         instance=component,
         old_data={
             'settings': {
-                environment.alias: prev_settings
+                environment.alias: old_settings
             }
         },
         new_data={
             'settings': {
-                environment.alias: get_settings(environment=environment, component=component)
+                environment.alias: new_settings
             }
         },
         user=kwargs.get('user'),

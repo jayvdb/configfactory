@@ -84,7 +84,7 @@
                             {% elif action == 'change' %}
                                 <tr>
                                     <td class="text-blue"><i class="fa fa-pencil"></i></td>
-                                    <td>{{ field }}</td>
+                                    <td>{{ field|first }}</td>
                                     <td class="text-muted">
                                         {{ detail|first }}
                                     </td>

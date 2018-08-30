@@ -4,7 +4,9 @@ import os
 import shutil
 
 import appdirs
-from django.utils.functional import LazyObject
+from django.utils.functional import LazyObject, cached_property
+
+from configfactory.support import appdir
 
 logger = logging.getLogger(__name__)
 
@@ -32,38 +34,40 @@ class Config:
     def __contains__(self, item):
         return self.has(item)
 
-    def default(self):
-        return os.environ.get(
-            self.envvar,
-            appdirs.user_data_dir(self.target_filename)
-        )
+    @cached_property
+    def config_file(self) -> str:
+
+        env_or_user_data_path = os.environ.get(self.envvar, appdirs.user_data_dir(self.target_filename))
+        if os.path.exists(env_or_user_data_path):
+            return env_or_user_data_path
+
+        project_path = appdir.root_dir(self.target_filename)
+        if os.path.exists(project_path):
+            return project_path
+
+        if self.envvar in os.environ:
+            logger.warning(f'Configuration file `{os.environ[self.envvar]}` does not exists. Using defaults.')
+
+        self.is_default = True
+
+        return self.defaults_filename
 
     def load(self):
 
-        config_file = os.environ.get(self.envvar, appdirs.user_data_dir(self.target_filename))
-
-        if not os.path.exists(config_file):
-            logger.warning(f'Configuration file `{config_file}` does not exists. Using defaults.')
-            self.is_default = True
-            config_file = self.defaults_filename
-
         config = configparser.ConfigParser()
 
-        with open(config_file) as fp:
+        with open(self.config_file) as fp:
             config.read_file(fp)
 
         for option in config.options('configfactory'):
             self._settings[option] = config.get('configfactory', option)
 
-    def create(self, dst=None, overwrite=False):
+    def create(self, dst: str=None):
 
         if dst is None:
-            dst = os.environ.get(
-                self.envvar,
-                appdirs.user_data_dir(self.target_filename)
-            )
+            dst = self.config_file
 
-        if os.path.exists(dst) and not overwrite:
+        if os.path.exists(dst):
             return dst, False
 
         shutil.copyfile(self.defaults_filename, dst)

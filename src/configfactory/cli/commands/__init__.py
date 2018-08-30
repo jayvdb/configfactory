@@ -5,20 +5,27 @@ import django
 from configfactory.support.config import config
 from django.core.management import call_command, execute_from_command_line
 
+from configfactory.support import appenv
+
 
 @click.command('init')
-def init_command():
+@click.option('config_path', '--config', envvar=appenv.VAR_CONFIG,
+              type=click.Path(writable=True, readable=True, resolve_path=True))
+def init_command(config_path):
     """Initialize ConfigFactory."""
 
-    config.create()
+    dst, created = config.create(dst=config_path)
 
-    django.setup()
+    if not created:
+        click.echo(f'Configuration file {dst} already exists.')
 
-    call_command('migrate', verbosity=0)
-    click.echo('Database Initialized.')
-
-    if click.confirm('Would like to create superuser ?'):
-        call_command('createsuperuser')
+    # django.setup()
+    #
+    # call_command('migrate', verbosity=0)
+    # click.echo('Database Initialized.')
+    #
+    # if click.confirm('Would like to create superuser ?'):
+    #     call_command('createsuperuser')
 
 
 @click.command('start')
@@ -74,7 +81,7 @@ def start_command(**options):
 )
 @click.argument('argv', nargs=-1, type=click.UNPROCESSED)
 @click.pass_context
-def django_command(ctx, argv):
+def django_group(ctx, argv):
     """
     Django commands.
     """

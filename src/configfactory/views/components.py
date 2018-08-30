@@ -33,8 +33,8 @@ from configfactory.shortcuts import get_base_environment
 from configfactory.signals import (
     component_created,
     component_deleted,
-    component_settings_updated,
     component_updated,
+    settings_updated,
 )
 from configfactory.utils import dicthelper, security
 from configfactory.utils.db import model_to_dict
@@ -392,25 +392,28 @@ class ComponentSettingsUpdateView(LoginRequiredMixin, ConfigStoreCachedMixin, Up
 
         component: Component = self.object
 
-        prev_settings = get_settings(
+        old_settings = get_settings(
             environment=self.environment,
             component=component,
         )
+
+        new_settings = form.cleaned_data['settings']
 
         # Update store settings
         update_settings(
             environment=self.environment,
             component=component,
-            data=form.cleaned_data['settings'],
+            data=new_settings,
             run_validation=False
         )
 
         # Notify about updated component settings
-        component_settings_updated.send(
+        settings_updated.send(
             sender=Component,
             component=component,
             environment=self.environment,
-            prev_settings=prev_settings,
+            old_settings=old_settings,
+            new_settings=new_settings,
             user=self.request.user
         )
 
