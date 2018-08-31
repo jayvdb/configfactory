@@ -1,22 +1,24 @@
 from django.urls import path
 
-from configfactory.api.views import (
-    ComponentsAPIView,
-    ComponentSettingsAPIView,
-    EnvironmentsAPIView,
-)
+from configfactory.api import views
+
+app_name = 'api'
 
 urlpatterns = [
 
     path('',
-         view=EnvironmentsAPIView.as_view(),
-         name='api_environments'),
+         view=views.EnvironmentsAPIView.as_view(),
+         name='environments'),
 
     path('<environment>/',
-         view=ComponentsAPIView.as_view(),
-         name='api_components'),
+         view=views.SettingsJsonAPIView.as_view(),
+         name='settings'),
 
-    path('<environment>/<alias>/',
-         view=ComponentSettingsAPIView.as_view(),
-         name='api_component_settings'),
+    path('<environment>/json/',
+         view=views.SettingsJsonAPIView.as_view(),
+         name='settings_json'),
+
+    path('<environment>/dotenv/',
+         view=views.SettingsDotEnvAPIView.as_view(),
+         name='settings_dotenv'),
 ]
