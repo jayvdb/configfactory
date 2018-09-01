@@ -99,7 +99,6 @@ INSTALLED_APPS = [
     'crispy_forms',
     'guardian',
     'debug_toolbar',
-
 ]
 
 ######################################
