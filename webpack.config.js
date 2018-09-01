@@ -3,6 +3,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 
 module.exports = {
+    mode: 'production',
     entry: './src/configfactory/assets/js/index.js',
     plugins: [
         new CleanWebpackPlugin(['src/configfactory/static/dist']),
