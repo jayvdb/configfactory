@@ -6,9 +6,20 @@
   "directories": {
     "test": "tests"
   },
-  "dependencies": {},
+  "dependencies": {
+    "ace-builds": "^1.4.1",
+    "bootstrap": "^3.3.7",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.3.1"
+  },
   "devDependencies": {
     "clean-webpack-plugin": "^0.1.19",
+    "css-loader": "^1.0.0",
+    "file-loader": "^2.0.0",
+    "mini-css-extract-plugin": "^0.4.2",
+    "postcss-loader": "^3.0.0",
+    "sass-loader": "^7.1.0",
+    "url-loader": "^1.1.1",
     "webpack": "^4.17.1",
     "webpack-cli": "^3.1.0",
     "webpack-manifest-plugin": "^2.0.3"
