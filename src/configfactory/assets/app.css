@@ -239,3 +239,9 @@ input:checked + .toggle__slider:before {
 .toggle__slider.round:before {
     border-radius: 50%;
 }
+
+
+.ace_editor {
+    border: 1px solid lightgray;
+    height: 680px;
+}

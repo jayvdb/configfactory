@@ -1,5 +1,5 @@
 {% extends 'layouts/main.html' %}
-{% load i18n buttons %}
+{% load i18n buttons static %}
 
 {% block page_title %}
     {% trans 'Edit' %} {{ component.name }} <small><strong>[{{ component.alias }}]</strong></small> {% trans 'schema' %}
@@ -18,8 +18,7 @@
     </form>
 {% endblock %}
 
-{% block page_inline_js %}
-    <script>
-        $('#id_schema').ace({theme: 'tomorrow_night_eighties', lang: 'json'});
-    </script>
+{% block page_js %}
+    {{ block.super }}
+    <script src="{% static 'dist/pages/schema.update.js' %}"></script>
 {% endblock %}

@@ -1,5 +1,5 @@
 {% extends 'layouts/main.html' %}
-{% load i18n guardian_tags %}
+{% load i18n guardian_tags static %}
 
 {% block page_head %}
     <div class="row">
@@ -66,8 +66,7 @@
     </form>
 {% endblock %}
 
-{% block page_inline_js %}
-    <script>
-        $('#id_settings').ace({theme: 'tomorrow_night_eighties', lang: 'json'});
-    </script>
+{% block page_js %}
+    {{ block.super }}
+    <script src="{% static 'dist/pages/settings.update.js' %}"></script>
 {% endblock %}

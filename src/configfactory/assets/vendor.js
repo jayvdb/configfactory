@@ -1,5 +1,6 @@
-import $ from 'jquery';
+import 'jquery';
 import 'bootstrap';
 
-window.jQuery = $;
-window.$ = $;
+// Import styles
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'font-awesome/css/font-awesome.min.css';

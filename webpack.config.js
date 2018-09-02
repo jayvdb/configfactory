@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ManifestPlugin = require('webpack-manifest-plugin');
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
@@ -7,10 +8,18 @@ module.exports = {
     mode: 'production',
     entry: {
         app: './src/configfactory/assets/app.js',
-        vendor: './src/configfactory/assets/vendor.js'
+        vendor: './src/configfactory/assets/vendor.js',
+        "pages/settings.view": './src/configfactory/assets/pages/settings.view.js',
+        "pages/settings.update": './src/configfactory/assets/pages/settings.update.js',
+        "pages/schema.update": './src/configfactory/assets/pages/schema.update.js'
     },
     plugins: [
         new CleanWebpackPlugin(['src/configfactory/static/dist']),
+        new webpack.ProvidePlugin({
+            $: 'jquery',
+            jQuery: 'jquery',
+            'windows.jQuery': 'jquery',
+        }),
         new ManifestPlugin(),
         new MiniCssExtractPlugin({
             filename: "[name].css",
