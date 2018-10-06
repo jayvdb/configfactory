@@ -3,14 +3,14 @@ from typing import Dict
 from django.conf import settings
 from django.utils.functional import LazyObject
 
-from configfactory.configstore.abc import ConfigStore
+from configfactory.configstore.base import ConfigStore
 from configfactory.configstore.database import DatabaseConfigStore
 from configfactory.configstore.filesystem import FileSystemConfigStore
 from configfactory.configstore.memory import MemoryConfigStore
 from configfactory.utils import json
 
 
-class LazyConfigStore(LazyObject):
+class ConfigStoreSetup(LazyObject):
 
     registry = {
         'memory': MemoryConfigStore,
@@ -27,7 +27,7 @@ class LazyConfigStore(LazyObject):
         self._wrapped = instance
 
 
-_store: ConfigStore = LazyConfigStore()
+_store: ConfigStore = ConfigStoreSetup()
 
 
 #########################################

@@ -1,6 +1,6 @@
 from configfactory.models import Config
 
-from .abc import ConfigStore
+from .base import ConfigStore
 
 
 class DatabaseConfigStore(ConfigStore):

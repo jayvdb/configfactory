@@ -1,6 +1,6 @@
 from typing import Optional
 
-from .abc import ConfigStore
+from .base import ConfigStore
 
 
 class MemoryConfigStore(ConfigStore):

@@ -1,6 +1,6 @@
 import os
 
-from .abc import ConfigStore
+from .base import ConfigStore
 
 
 class FileSystemConfigStore(ConfigStore):
