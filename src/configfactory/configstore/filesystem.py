@@ -11,25 +11,22 @@ class FileSystemConfigStore(ConfigStore):
 
     def get_all_data(self) -> dict:
 
-        settings = {}
+        data = {}
 
         for root, dirs, files in os.walk(self.directory):
-
             if root == self.directory:
                 for environment in dirs:
-                    settings[environment] = {}
-
+                    data[environment] = {}
             else:
                 directory, environment = os.path.split(root)
-                if environment in settings and files:
+                if environment in data and files:
                     for f in files:
                         component, extension = os.path.splitext(f)
                         if extension != '.json':
                             continue
-                        with open(os.path.join(root, f)) as f:
-                            settings[environment][component] = f.read()
-
-        return settings
+                        with open(os.path.join(root, f)) as fp:
+                            data[environment][component] = fp.read()
+        return data
 
     def update_data(self, environment: str, component: str, data: str):
         os.makedirs(os.path.join(self.directory, environment), exist_ok=True)
