@@ -3,7 +3,7 @@ import os
 import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 
-from configfactory.support import appenv, appdir
+from configfactory.support import appdir, appenv
 from configfactory.support.config import config
 from configfactory.support.logging import debug_logging
 
@@ -30,27 +30,27 @@ DATABASES = {
     )
 }
 
-DATABASE_DB_TABLES_REPLACE = False
+DATABASE_RENAME_TABLES = True
 
-DATABASE_DB_TABLES_PREFIX = config.get('database.prefix')
+DATABASE_TABLES_PREFIX = 'configfactory'
 
-DATABASE_DB_TABLES = {
-    'auth_group': 'groups',
-    'auth_group_permissions': 'group_permissions',
-    'auth_permission': 'permissions',
-    'configfactory_component': 'components',
-    'configfactory_config': 'configs',
-    'configfactory_environment': 'environments',
-    'configfactory_user': 'users',
-    'configfactory_user_groups': 'user_groups',
-    'configfactory_user_user_permissions': 'user_permissions',
+DATABASE_TABLES = {
+    'auth_group': 'auth_groups',
+    'auth_group_permissions': 'auth_group_permissions',
+    'auth_permission': 'auth_permissions',
+    'configfactory_component': 'config_components',
+    'configfactory_config': 'config_configs',
+    'configfactory_environment': 'config_environments',
+    'configfactory_user': 'auth_users',
+    'configfactory_user_groups': 'auth_user_groups',
+    'configfactory_user_user_permissions': 'auth_user_permissions',
     'configfactory_logentry': 'log_entries',
-    'configfactory_backup': 'backups',
+    'configfactory_backup': 'config_backups',
     'django_content_type': 'content_types',
     'django_migrations': 'migrations',
     'django_session': 'sessions',
-    'guardian_groupobjectpermission': 'group_object_permissions',
-    'guardian_userobjectpermission': 'user_object_permissions',
+    'guardian_groupobjectpermission': 'auth_group_object_permissions',
+    'guardian_userobjectpermission': 'auth_user_object_permissions',
 }
 
 ###########################################

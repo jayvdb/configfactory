@@ -21,9 +21,7 @@ DATABASES = {
     }
 }
 
-DATABASE_DB_TABLES_REPLACE = False
-
-DATABASE_DB_TABLES_PREFIX = None
+DATABASE_RENAME_TABLES = False
 
 ######################################
 # Media settings

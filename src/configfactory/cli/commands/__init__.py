@@ -1,16 +1,19 @@
 from multiprocessing import Process, cpu_count
 
 import click
-import django
-from configfactory.support.config import config
-from django.core.management import call_command, execute_from_command_line
+from django.core.management import execute_from_command_line
 
 from configfactory.support import appenv
+from configfactory.support.config import config
 
 
 @click.command('init')
-@click.option('config_path', '--config', envvar=appenv.VAR_CONFIG,
-              type=click.Path(writable=True, readable=True, resolve_path=True))
+@click.option(
+    'config_path',
+    '--config',
+    envvar=appenv.VAR_CONFIG,
+    type=click.Path(writable=True, readable=True, resolve_path=True)
+)
 def init_command(config_path):
     """Initialize ConfigFactory."""
 
@@ -30,9 +33,9 @@ def init_command(config_path):
 
 @click.command('start')
 @click.option(
-    '--bind', '-b',
-    help='A string of the form: HOST, HOST:PORT, '
-         'unix:PATH. An IP is a valid HOST.',
+    '--bind',
+    '-b',
+    help='A string of the form: HOST, HOST:PORT, unix:PATH. An IP is a valid HOST.',
     default=config.getlist('server.bind', default=['127.0.0.1:8080']),
     multiple=True
 )

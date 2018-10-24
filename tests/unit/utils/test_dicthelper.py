@@ -1,5 +1,3 @@
-from django.test import TestCase
-
 from configfactory.utils import dicthelper
 
 
