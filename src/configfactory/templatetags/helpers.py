@@ -1,4 +1,4 @@
-from django.template import Library
+from django.template.library import Library
 
 from configfactory.utils.http import query_params
 

@@ -11,11 +11,11 @@ def is_base_environment(environment: str) -> bool:
     return get_base_environment() == environment
 
 
-def back_url(to, request=None, *args, **kwargs) -> str:
+def back_url(to, request=None, query_param='next', *args, **kwargs) -> str:
     try:
         default_url = resolve_url(to, *args, **kwargs)
     except NoReverseMatch:
         default_url = None
     if request:
-        return request.GET.get('next', default_url)
+        return request.GET.get(query_param, default_url)
     return default_url

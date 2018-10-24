@@ -1,4 +1,4 @@
-from django.template import Library
+from django.template.library import Library
 
 from configfactory.shortcuts import back_url
 
