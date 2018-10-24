@@ -9,6 +9,7 @@ from configfactory.mixins import SuperuserRequiredMixin
 from configfactory.models import User
 from configfactory.signals import user_created, user_deleted, user_updated
 from configfactory.utils.db import model_to_dict
+from configfactory.views.access import EnvironmentPermissionsView, ComponentPermissionsView, APISettingsView
 
 
 class UserListView(SuperuserRequiredMixin, ListView):
@@ -158,3 +159,18 @@ class UserChangePasswordView(SuperuserRequiredMixin, UpdateView):
         kwargs.pop('instance')
         kwargs['user'] = self.object
         return kwargs
+
+
+class UserEnvironmentPermissionsView(EnvironmentPermissionsView):
+
+    user_or_group_model = User
+
+
+class UserComponentPermissionsView(ComponentPermissionsView):
+
+    user_or_group_model = User
+
+
+class UserAPISettingsView(APISettingsView):
+
+    user_or_group_model = User

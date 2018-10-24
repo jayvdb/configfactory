@@ -1,4 +1,4 @@
-{% extends 'groups/layouts/edit.html' %}
+{% extends template_layout_name %}
 {% load i18n pagination crispy_forms_tags perms static %}
 
 {% block page_title %}<strong>{{ group }}</strong> {{ object_name }} {% trans 'permissions' %}{% endblock %}

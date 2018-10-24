@@ -41,9 +41,12 @@ from configfactory.views.profile import (
     ProfileUpdateView,
 )
 from configfactory.views.users import (
+    UserAPISettingsView,
     UserChangePasswordView,
+    UserComponentPermissionsView,
     UserCreateView,
     UserDeleteView,
+    UserEnvironmentPermissionsView,
     UserListView,
     UserUpdateView,
 )
@@ -165,6 +168,18 @@ urlpatterns = [
     path('users/<int:pk>/delete/',
          view=UserDeleteView.as_view(),
          name='delete_user'),
+
+    path('users/<int:pk>/environments/',
+         view=UserEnvironmentPermissionsView.as_view(),
+         name='user_environments'),
+
+    path('users/<int:pk>/components/',
+         view=UserComponentPermissionsView.as_view(),
+         name='user_components'),
+
+    path('users/<int:pk>/api_settings/',
+         view=UserAPISettingsView.as_view(),
+         name='user_api_settings'),
 
     path('groups/',
          view=GroupListView.as_view(),
