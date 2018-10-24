@@ -30,29 +30,6 @@ DATABASES = {
     )
 }
 
-DATABASE_RENAME_TABLES = True
-
-DATABASE_TABLES_PREFIX = 'configfactory'
-
-DATABASE_TABLES = {
-    'auth_group': 'auth_groups',
-    'auth_group_permissions': 'auth_group_permissions',
-    'auth_permission': 'auth_permissions',
-    'configfactory_component': 'config_components',
-    'configfactory_config': 'config_configs',
-    'configfactory_environment': 'config_environments',
-    'configfactory_user': 'auth_users',
-    'configfactory_user_groups': 'auth_user_groups',
-    'configfactory_user_user_permissions': 'auth_user_permissions',
-    'configfactory_logentry': 'log_entries',
-    'configfactory_backup': 'config_backups',
-    'django_content_type': 'content_types',
-    'django_migrations': 'migrations',
-    'django_session': 'sessions',
-    'guardian_groupobjectpermission': 'auth_group_object_permissions',
-    'guardian_userobjectpermission': 'auth_user_object_permissions',
-}
-
 ###########################################
 # Template settings
 ###########################################
@@ -82,9 +59,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'configfactory.middleware.logging_middleware',
-    'configfactory.middleware.environments_middleware',
-    'configfactory.middleware.components_middleware',
+    'configfactory.middleware.LoggingMiddleware',
+    'configfactory.middleware.EnvironmentsMiddleware',
+    'configfactory.middleware.ComponentsMiddleware',
+    'configfactory.api.middleware.AccessMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 

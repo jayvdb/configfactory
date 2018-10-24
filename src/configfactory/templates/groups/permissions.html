@@ -1,36 +1,5 @@
 {% extends 'groups/layouts/edit.html' %}
-{% load i18n pagination crispy_forms_tags perms %}
-
-{% block page_inline_js %}
-    <script>
-      $(document).ready(function () {
-
-        $('input[name=obj]').change(function () {
-
-          var $this = $(this)
-          var objectId = $this.val()
-          var perm = $this.data('perm')
-          var action = $this.is(':checked') ? 'add' : 'remove'
-
-          $.post('{{ request.path }}', {
-            object_id: objectId,
-            action: action,
-            perm: perm
-          }, function (response) {
-            if (response.success) {
-              if (!perm.startsWith('view_') && action === 'add') {
-                var $view = $this.closest('tr').find('input[data-perm^=view_]')
-                if (!$view.is(':checked')) {
-                  $view.prop('checked', true)
-                  $view.trigger('change')
-                }
-              }
-            }
-          })
-        })
-      })
-    </script>
-{% endblock %}
+{% load i18n pagination crispy_forms_tags perms static %}
 
 {% block page_title %}<strong>{{ group }}</strong> {{ object_name }} {% trans 'permissions' %}{% endblock %}
 
@@ -68,21 +37,21 @@
                 <td>
                     {% has_perm perm_checker perm_view object as has_view_perm %}
                     <label class="toggle">
-                        <input name="obj" value="{{ object.pk }}" type="checkbox" {% if has_view_perm %}checked{% endif %} data-perm="{{ perm_view }}">
+                        <input name="obj" value="{{ object.pk }}" type="checkbox" {% if has_view_perm %}checked{% endif %} data-perm="{{ perm_view }}" data-path="{{ request.path }}">
                         <span class="toggle__slider round"></span>
                     </label>
                 </td>
                 <td>
                     {% has_perm perm_checker perm_change object as has_change_perm %}
                     <label class="toggle">
-                        <input name="obj" value="{{ object.pk }}" type="checkbox" {% if has_change_perm %}checked{% endif %} data-perm="{{ perm_change }}">
+                        <input name="obj" value="{{ object.pk }}" type="checkbox" {% if has_change_perm %}checked{% endif %} data-perm="{{ perm_change }}" data-path="{{ request.path }}">
                         <span class="toggle__slider round"></span>
                     </label>
                 </td>
                 <td>
                     {% has_perm perm_checker perm_delete object as has_delete_perm %}
                     <label class="toggle">
-                        <input name="obj" value="{{ object.pk }}" type="checkbox" {% if has_delete_perm %}checked{% endif %} data-perm="{{ perm_delete }}">
+                        <input name="obj" value="{{ object.pk }}" type="checkbox" {% if has_delete_perm %}checked{% endif %} data-perm="{{ perm_delete }}" data-path="{{ request.path }}">
                         <span class="toggle__slider round"></span>
                     </label>
                 </td>
@@ -99,4 +68,9 @@
         </tbody>
     </table>
     {% pagination request page_obj %}
+{% endblock %}
+
+{% block page_js %}
+    {{ block.super }}
+    <script src="{% static 'dist/pages/permissions.edit.js' %}"></script>
 {% endblock %}

@@ -11,7 +11,8 @@ module.exports = {
         vendor: './src/configfactory/assets/vendor.js',
         "pages/settings.view": './src/configfactory/assets/pages/settings.view.js',
         "pages/settings.update": './src/configfactory/assets/pages/settings.update.js',
-        "pages/schema.update": './src/configfactory/assets/pages/schema.update.js'
+        "pages/schema.update": './src/configfactory/assets/pages/schema.update.js',
+        "pages/permissions.edit": './src/configfactory/assets/pages/permissions.edit.js',
     },
     plugins: [
         new CleanWebpackPlugin(['src/configfactory/static/dist']),
