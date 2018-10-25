@@ -2,12 +2,11 @@ from distutils.util import strtobool
 
 from django.http import HttpResponse, HttpResponseForbidden, JsonResponse
 from django.shortcuts import get_object_or_404
-from django.urls import reverse
 from django.utils.functional import cached_property
 from django.views import View
 
+from configfactory.api.serializers import EnvironmentSerializer
 from configfactory.mixins import ConfigStoreCachedMixin
-from configfactory.models import Environment
 from configfactory.response import DotEnvResponse
 from configfactory.services.configsettings import get_environment_settings
 from configfactory.services.environments import (
@@ -31,25 +30,14 @@ class APIView(View):
 class EnvironmentsAPIView(APIView):
 
     def get(self, request):
-
-        data = [
-            self._render(request, environment)
-            for environment in self.environments
-        ]
-
-        return JsonResponse(data=data, safe=False)
-
-    def _render(self, request, environment: Environment):
-        return {
-            'alias': environment.alias,
-            'name': environment.name,
-            'fallback': environment.fallback.alias if environment.fallback_id else None,
-            'url': request.build_absolute_uri(
-                reverse('api:settings', kwargs={
-                    'environment': environment.alias
-                })
-            )
-        }
+        serializer = EnvironmentSerializer(
+            instance=self.environments,
+            many=True,
+            context={
+                'request': request
+            },
+        )
+        return JsonResponse(data=serializer.data, safe=False)
 
 
 class SettingsAPIView(ConfigStoreCachedMixin, APIView):

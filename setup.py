@@ -20,6 +20,7 @@ requires = [
     'django-guardian==1.4.9',
     'django-crispy-forms==1.7.2',
     'django-debug-toolbar==1.10.1',
+    'djangorestframework==3.9.0',
     'dj-static==0.0.6',
     'dj-database-url==0.5.0',
     'cryptography==2.3.1',
