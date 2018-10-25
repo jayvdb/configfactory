@@ -93,6 +93,13 @@ def user_edit_nav(request, user):
                 'pk': user.pk
             })
         ),
+        TabItem(
+            title=_('Password'),
+            active=url_name == 'change_user_password',
+            url=reverse('change_user_password', kwargs={
+                'pk': user.pk
+            })
+        ),
     ]
 
     if not user.is_superuser:

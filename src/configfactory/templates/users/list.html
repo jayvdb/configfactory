@@ -52,9 +52,6 @@
                     <td>
                         {% if current_user.is_superuser %}
                             <div class="btn-group btn-group-sm pull-right">
-                                <a href="{% url 'change_user_password' pk=user.pk %}" class="btn btn-default" data-toggle="tooltip" title="{% trans 'Set/change password' %}">
-                                    <i class="fa fa-hashtag"></i>
-                                </a>
                                 <a href="{% url 'update_user' pk=user.pk %}" class="btn btn-default" data-toggle="tooltip" title="{% trans 'Edit' %}">
                                     <i class="fa fa-pencil"></i>
                                 </a>
