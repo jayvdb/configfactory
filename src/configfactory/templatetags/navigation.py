@@ -93,28 +93,35 @@ def user_edit_nav(request, user):
                 'pk': user.pk
             })
         ),
-        TabItem(
-            title=_('Environments'),
-            active=url_name == 'user_environments',
-            url=reverse('user_environments', kwargs={
-                'pk': user.pk
-            })
-        ),
-        TabItem(
-            title=_('Components'),
-            active=url_name == 'user_components',
-            url=reverse('user_components', kwargs={
-                'pk': user.pk
-            })
-        ),
+    ]
+
+    if not user.is_superuser:
+        items.extend([
+            TabItem(
+                title=_('Environments'),
+                active=url_name == 'user_environments',
+                url=reverse('user_environments', kwargs={
+                    'pk': user.pk
+                })
+            ),
+            TabItem(
+                title=_('Components'),
+                active=url_name == 'user_components',
+                url=reverse('user_components', kwargs={
+                    'pk': user.pk
+                })
+            ),
+        ])
+
+    items.append(
         TabItem(
             title=_('API Settings'),
             active=url_name == 'user_api_settings',
-            url=reverse('group_api_settings', kwargs={
+            url=reverse('user_api_settings', kwargs={
                 'pk': user.pk
             })
-        ),
-    ]
+        )
+    )
 
     return {
         'request': request,

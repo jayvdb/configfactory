@@ -12,6 +12,7 @@ from configfactory.views.access import (
     APISettingsView,
     ComponentPermissionsView,
     EnvironmentPermissionsView,
+    UserOrGroupAccessMixin,
 )
 
 
@@ -135,13 +136,22 @@ class GroupDeleteView(SuperuserRequiredMixin, DeleteView):
         return response
 
 
-class GroupEnvironmentPermissionsView(EnvironmentPermissionsView):
+class GroupAccessMixin(UserOrGroupAccessMixin):
+
+    template_layout_name = 'groups/layouts/edit.html'
+
+    user_or_group_model = Group
+
+    user_or_group_param = 'group'
+
+
+class GroupEnvironmentPermissionsView(GroupAccessMixin, EnvironmentPermissionsView):
     pass
 
 
-class GroupComponentPermissionsView(ComponentPermissionsView):
+class GroupComponentPermissionsView(GroupAccessMixin, ComponentPermissionsView):
     pass
 
 
-class GroupAPISettingsView(APISettingsView):
+class GroupAPISettingsView(GroupAccessMixin, APISettingsView):
     pass

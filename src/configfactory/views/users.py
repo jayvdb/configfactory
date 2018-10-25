@@ -161,16 +161,22 @@ class UserChangePasswordView(SuperuserRequiredMixin, UpdateView):
         return kwargs
 
 
-class UserEnvironmentPermissionsView(EnvironmentPermissionsView):
+class UserAccessMixin:
+
+    template_layout_name = 'users/layouts/edit.html'
 
     user_or_group_model = User
 
-
-class UserComponentPermissionsView(ComponentPermissionsView):
-
-    user_or_group_model = User
+    user_or_group_param = 'user'
 
 
-class UserAPISettingsView(APISettingsView):
+class UserEnvironmentPermissionsView(UserAccessMixin, EnvironmentPermissionsView):
+    pass
 
-    user_or_group_model = User
+
+class UserComponentPermissionsView(UserAccessMixin, ComponentPermissionsView):
+    pass
+
+
+class UserAPISettingsView(UserAccessMixin, APISettingsView):
+    pass

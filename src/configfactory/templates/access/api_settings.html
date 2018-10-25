@@ -1,7 +1,7 @@
 {% extends template_layout_name %}
 {% load i18n crispy_forms_tags %}
 
-{% block page_title %}{% trans 'Update' %} <strong>{{ group.name }}</strong> {% trans 'API Settings' %}{% endblock %}
+{% block page_title %}<strong>{{ user_or_group }}</strong> {% trans 'API Settings' %}{% endblock %}
 
 {% block content %}
     <div class="row">

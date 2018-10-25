@@ -1,7 +1,7 @@
 {% extends template_layout_name %}
 {% load i18n pagination crispy_forms_tags perms static %}
 
-{% block page_title %}<strong>{{ group }}</strong> {{ object_name }} {% trans 'permissions' %}{% endblock %}
+{% block page_title %}<strong>{{ user_or_group }}</strong> {{ object_name }} {% trans 'permissions' %}{% endblock %}
 
 {% block page_head_tools %}
     <form action="">

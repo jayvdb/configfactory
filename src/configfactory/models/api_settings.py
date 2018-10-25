@@ -10,8 +10,8 @@ class APISettings(models.Model):
     group = models.OneToOneField('auth.Group', on_delete=models.CASCADE, blank=True, null=True,
                                  verbose_name=_('group'), related_name='api_settings')
 
-    user = models.ForeignKey('User', on_delete=models.SET_NULL, blank=True, null=True,
-                             verbose_name=_('user'), related_name='api_settings')
+    user = models.OneToOneField('User', on_delete=models.SET_NULL, blank=True, null=True,
+                                verbose_name=_('user'), related_name='api_settings')
 
     is_enabled = models.BooleanField(default=False, verbose_name=_('enabled'),
                                      help_text=_('Designates whether this group is enabled for API.'))
