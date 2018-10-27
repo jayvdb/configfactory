@@ -24,7 +24,7 @@ class UsersViewsTestCase(TestCase):
 
         response = self.client.get('/users/create/')
 
-        self.assertEqual(response.status_code, 403)
+        assert response.status_code == 403
 
     def test_list_users(self):
 
@@ -34,11 +34,9 @@ class UsersViewsTestCase(TestCase):
 
         response = self.client.get('/users/')
 
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
     def test_create_user(self):
-
-        group = GroupFactory(name='Admin')
 
         self.client.force_login(UserFactory(is_superuser=True))
 
@@ -49,16 +47,36 @@ class UsersViewsTestCase(TestCase):
         response = self.client.post('/users/create/', data={
             'username': 'test.user',
             'email': 'test.user@mail.com',
-            'groups': [group.pk]
         })
 
         self.assertRedirects(response, '/users/')
 
         user = User.objects.get(username='test.user')
 
-        self.assertEqual(user.groups.count(), 1)
+        assert user.email == 'test.user@mail.com'
 
     def test_update_user(self):
+
+        user = UserFactory(username='test.user', email='test.user@mail.com')
+
+        self.client.force_login(UserFactory(is_superuser=True))
+
+        response = self.client.get('/users/{pk}/'.format(pk=user.pk))
+
+        self.assertEqual(response.status_code, 200)
+
+        response = self.client.post('/users/{pk}/'.format(pk=user.pk), data={
+            'username': user.username,
+            'email': 'real.user@mail.com',
+        })
+
+        self.assertRedirects(response, '/users/')
+
+        user.refresh_from_db()
+
+        self.assertEqual(user.email, 'real.user@mail.com')
+
+    def test_update_user_access_groups(self):
 
         admin_group = GroupFactory(name='Admin')
         api_group = GroupFactory(name='API')
@@ -73,17 +91,11 @@ class UsersViewsTestCase(TestCase):
 
         self.assertEqual(response.status_code, 200)
 
-        response = self.client.post('/users/{pk}/'.format(pk=user.pk), data={
-            'username': user.username,
-            'email': 'real.user@mail.com',
+        response = self.client.post('/users/{pk}/access/'.format(pk=user.pk), data={
             'groups': [admin_group.pk, api_group.pk]
         })
 
         self.assertRedirects(response, '/users/')
-
-        user.refresh_from_db()
-
-        self.assertEqual(user.email, 'real.user@mail.com')
         self.assertEqual(user.groups.count(), 2)
 
     def test_delete_group(self):
@@ -94,10 +106,10 @@ class UsersViewsTestCase(TestCase):
 
         response = self.client.get('/users/{pk}/delete/'.format(pk=user.pk))
 
-        self.assertEqual(response.status_code, 200)
+        assert response.status_code == 200
 
         response = self.client.post('/users/{pk}/delete/'.format(pk=user.pk))
 
         self.assertRedirects(response, '/users/')
 
-        self.assertFalse(User.objects.filter(username='test.user').exists())
+        assert not User.objects.filter(username='test.user').exists()
