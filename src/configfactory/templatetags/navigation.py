@@ -64,7 +64,7 @@ def group_edit_nav(request, group):
             })
         ),
         TabItem(
-            title=_('API Settings'),
+            title=_('API'),
             active=url_name == 'group_api_settings',
             url=reverse('group_api_settings', kwargs={
                 'pk': group.pk
@@ -129,7 +129,7 @@ def user_edit_nav(request, user):
 
     items.append(
         TabItem(
-            title=_('API Settings'),
+            title=_('API'),
             active=url_name == 'user_api_settings',
             url=reverse('user_api_settings', kwargs={
                 'pk': user.pk

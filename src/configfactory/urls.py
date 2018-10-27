@@ -165,7 +165,7 @@ urlpatterns = [
          view=UserAccessUpdateView.as_view(),
          name='update_user_access'),
 
-    path('users/<int:pk>/change_password/',
+    path('users/<int:pk>/password/',
          view=UserChangePasswordView.as_view(),
          name='change_user_password'),
 
@@ -181,7 +181,7 @@ urlpatterns = [
          view=UserComponentPermissionsView.as_view(),
          name='user_components'),
 
-    path('users/<int:pk>/api_settings/',
+    path('users/<int:pk>/api/',
          view=UserAPISettingsView.as_view(),
          name='user_api_settings'),
 

@@ -113,7 +113,7 @@ class UserUpdateView(SuperuserRequiredMixin, UpdateView):
 
 class UserAccessUpdateView(UserUpdateView):
 
-    template_name = 'users/update.html'
+    template_name = 'users/update_access.html'
 
     form_class = UserAccessForm
 

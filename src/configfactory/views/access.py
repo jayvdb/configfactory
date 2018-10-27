@@ -200,6 +200,7 @@ class APISettingsView(UserOrGroupAccessMixin, SuperuserRequiredMixin, UpdateView
         context = super().get_context_data(**kwargs)
         context.update({
             'template_layout_name': self.template_layout_name,
+            'user_or_group': self.user_or_group,
             self.user_or_group_param: self.user_or_group
         })
         return context
