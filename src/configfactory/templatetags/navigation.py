@@ -87,9 +87,16 @@ def user_edit_nav(request, user):
 
     items = [
         TabItem(
-            title=_('Base'),
+            title=_('Personal Info'),
             active=url_name == 'update_user',
             url=reverse('update_user', kwargs={
+                'pk': user.pk
+            })
+        ),
+        TabItem(
+            title=_('Access'),
+            active=url_name == 'update_user_access',
+            url=reverse('update_user_access', kwargs={
                 'pk': user.pk
             })
         ),

@@ -49,7 +49,7 @@ from configfactory.views.users import (
     UserEnvironmentPermissionsView,
     UserListView,
     UserUpdateView,
-)
+    UserAccessUpdateView)
 
 urlpatterns = [
 
@@ -160,6 +160,10 @@ urlpatterns = [
     path('users/<int:pk>/',
          view=UserUpdateView.as_view(),
          name='update_user'),
+
+    path('users/<int:pk>/access/',
+         view=UserAccessUpdateView.as_view(),
+         name='update_user_access'),
 
     path('users/<int:pk>/change_password/',
          view=UserChangePasswordView.as_view(),

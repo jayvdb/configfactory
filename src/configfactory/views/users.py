@@ -4,12 +4,20 @@ from django.urls import reverse_lazy
 from django.utils.translation import ugettext_lazy as _
 from django.views.generic import CreateView, DeleteView, ListView, UpdateView
 
-from configfactory.forms.user import UserForm, UserSetPasswordForm
+from configfactory.forms.user import (
+    UserAccessForm,
+    UserForm,
+    UserSetPasswordForm,
+)
 from configfactory.mixins import SuperuserRequiredMixin
 from configfactory.models import User
 from configfactory.signals import user_created, user_deleted, user_updated
 from configfactory.utils.db import model_to_dict
-from configfactory.views.access import EnvironmentPermissionsView, ComponentPermissionsView, APISettingsView
+from configfactory.views.access import (
+    APISettingsView,
+    ComponentPermissionsView,
+    EnvironmentPermissionsView,
+)
 
 
 class UserListView(SuperuserRequiredMixin, ListView):
@@ -82,9 +90,9 @@ class UserUpdateView(SuperuserRequiredMixin, UpdateView):
 
         response = super().form_valid(form)
 
-        user = self.object  # type: User
+        user: User = self.object
 
-        # Notify about created user
+        # Notify about updated user
         user_updated.send(
             sender=User,
             user=user,
@@ -101,6 +109,13 @@ class UserUpdateView(SuperuserRequiredMixin, UpdateView):
         )
 
         return response
+
+
+class UserAccessUpdateView(UserUpdateView):
+
+    template_name = 'users/update.html'
+
+    form_class = UserAccessForm
 
 
 class UserDeleteView(SuperuserRequiredMixin, DeleteView):

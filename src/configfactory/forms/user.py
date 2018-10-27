@@ -19,6 +19,28 @@ class UserForm(forms.ModelForm):
             'email',
             'first_name',
             'last_name',
+        )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper = FormHelper()
+        self.helper.layout = Layout(
+            Field('username'),
+            Field('email'),
+            Field('first_name'),
+            Field('last_name'),
+            FormActions(
+                Submit('save', _('Save')),
+                Back(reverse('users'))
+            )
+        )
+
+
+class UserAccessForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = (
             'is_active',
             'is_superuser',
             'groups',
@@ -28,21 +50,9 @@ class UserForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.layout = Layout(
-            TabHolder(
-                Tab(
-                    _('General'),
-                    'username',
-                    'email',
-                    'first_name',
-                    'last_name',
-                ),
-                Tab(
-                    _('Access'),
-                    'is_active',
-                    'is_superuser',
-                    'groups'
-                )
-            ),
+            Field('is_active'),
+            Field('is_superuser'),
+            Field('groups'),
             FormActions(
                 Submit('save', _('Save')),
                 Back(reverse('users'))
