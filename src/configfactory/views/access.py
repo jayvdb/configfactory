@@ -1,8 +1,7 @@
 from typing import Type, Union
 
 from django.contrib import messages
-from django.contrib.auth.models import Group, Permission
-from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import Group
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.db.models import Model
@@ -15,11 +14,11 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import UpdateView
 from guardian.core import ObjectPermissionChecker
-from guardian.shortcuts import assign_perm, remove_perm
 
 from configfactory.forms.api_settings import APISettingsForm
 from configfactory.mixins import SuperuserRequiredMixin
 from configfactory.models import APISettings, Component, Environment, User
+from configfactory.services.permissions import update_permission
 
 
 class UserOrGroupAccessMixin:
@@ -113,7 +112,6 @@ class PermissionsView(UserOrGroupAccessMixin, SuperuserRequiredMixin, View):
         object_id = None
         perm = None
         action = None
-        user_or_group = self.user_or_group
         queryset = self.get_obj_queryset()
 
         try:
@@ -123,26 +121,17 @@ class PermissionsView(UserOrGroupAccessMixin, SuperuserRequiredMixin, View):
         except (KeyError, ValueError):
             pass
 
-        if object_id and action in ['add', 'remove']:
+        obj = get_object_or_404(queryset, pk=object_id)
 
-            obj = get_object_or_404(queryset, pk=object_id)
-            content_type = ContentType.objects.get_for_model(queryset.model)
+        if action in ['assign', 'remove']:
 
-            # Get or create permission
-            try:
-                permission = Permission.objects.get(content_type=content_type, codename=perm)
-            except Permission.DoesNotExist:
-                name = perm.replace('_', '').title()
-                permission = Permission.objects.create(
-                    name=name,
-                    content_type=content_type,
-                    codename=perm
-                )
+            update_permission(
+                user_or_group=self.user_or_group,
+                obj=obj,
+                perm=perm,
+                action=action
+            )
 
-            if action == 'add':
-                assign_perm(permission, user_or_group, obj)
-            else:
-                remove_perm(permission, user_or_group, obj)
             success = True
 
         return JsonResponse(data={

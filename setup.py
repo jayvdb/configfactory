@@ -23,6 +23,7 @@ requires = [
     'djangorestframework==3.9.0',
     'dj-static==0.0.6',
     'dj-database-url==0.5.0',
+    'dataclasses==0.6',
     'cryptography==2.3.1',
     'click==7.0',
     'pytz==2018.5',
