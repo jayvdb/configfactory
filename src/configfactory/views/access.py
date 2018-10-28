@@ -13,12 +13,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.views.generic import UpdateView
-from guardian.core import ObjectPermissionChecker
 
 from configfactory.forms.api_settings import APISettingsForm
 from configfactory.mixins import SuperuserRequiredMixin
 from configfactory.models import APISettings, Component, Environment, User
-from configfactory.services.permissions import update_permission
+from configfactory.services.permissions import update_permission, get_permissions
 
 
 class UserOrGroupAccessMixin:
@@ -85,24 +84,19 @@ class PermissionsView(UserOrGroupAccessMixin, SuperuserRequiredMixin, View):
         except EmptyPage:
             page_obj = paginator.page(paginator.num_pages)
 
-        object_list = page_obj.object_list
-
-        perm_checker = ObjectPermissionChecker(user_or_group)
-        perm_checker.prefetch_perms(object_list)
+        permissions = get_permissions(user_or_group, page_obj.object_list)
 
         return render(request, self.template_name, {
             'template_layout_name': self.template_layout_name,
             self.user_or_group_param: user_or_group,
             'user_or_group': user_or_group,
-            'object_model': self.object_model,
             'object_name': self.object_model._meta.verbose_name,
             'object_name_plural': self.object_model._meta.verbose_name_plural,
-            'object_list': object_list,
             'page_obj': page_obj,
-            'perm_checker': perm_checker,
             'perm_view': self.perm_view,
             'perm_change': self.perm_change,
             'perm_delete': self.perm_delete,
+            'permissions': permissions,
             'search': search
         })
 

@@ -25,37 +25,36 @@
         </tr>
         </thead>
         <tbody>
-        {% for object in object_list %}
-            <tr>
-                <td>
-                    {% if object.get_absolute_url %}
-                        <a href="{{ object.get_absolute_url }}">{{ object.name|upper }}</a>
-                    {% else %}
-                        {{ object.name|upper }}
-                    {% endif %}
-                </td>
-                <td>
-                    {% has_perm perm_checker perm_view object as has_view_perm %}
-                    <label class="toggle">
-                        <input name="obj" value="{{ object.pk }}" type="checkbox" {% if has_view_perm %}checked{% endif %} data-perm="{{ perm_view }}" data-path="{{ request.path }}">
-                        <span class="toggle__slider round"></span>
-                    </label>
-                </td>
-                <td>
-                    {% has_perm perm_checker perm_change object as has_change_perm %}
-                    <label class="toggle">
-                        <input name="obj" value="{{ object.pk }}" type="checkbox" {% if has_change_perm %}checked{% endif %} data-perm="{{ perm_change }}" data-path="{{ request.path }}">
-                        <span class="toggle__slider round"></span>
-                    </label>
-                </td>
-                <td>
-                    {% has_perm perm_checker perm_delete object as has_delete_perm %}
-                    <label class="toggle">
-                        <input name="obj" value="{{ object.pk }}" type="checkbox" {% if has_delete_perm %}checked{% endif %} data-perm="{{ perm_delete }}" data-path="{{ request.path }}">
-                        <span class="toggle__slider round"></span>
-                    </label>
-                </td>
-            </tr>
+        {% for permission in permissions %}
+            {% with permission.obj as object %}
+                <tr>
+                    <td>
+                        {% if object.get_absolute_url %}
+                            <a href="{{ object.get_absolute_url }}">{{ object.name|upper }}</a>
+                        {% else %}
+                            {{ object.name|upper }}
+                        {% endif %}
+                    </td>
+                    <td>
+                        <label class="toggle">
+                            <input name="obj" value="{{ object.pk }}" type="checkbox" {% if permission.can_view %}checked{% endif %} data-perm="{{ perm_view }}" data-path="{{ request.path }}">
+                            <span class="toggle__slider round"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <label class="toggle">
+                            <input name="obj" value="{{ object.pk }}" type="checkbox" {% if permission.can_change %}checked{% endif %} data-perm="{{ perm_change }}" data-path="{{ request.path }}">
+                            <span class="toggle__slider round"></span>
+                        </label>
+                    </td>
+                    <td>
+                        <label class="toggle">
+                            <input name="obj" value="{{ object.pk }}" type="checkbox" {% if permission.can_delete %}checked{% endif %} data-perm="{{ perm_delete }}" data-path="{{ request.path }}">
+                            <span class="toggle__slider round"></span>
+                        </label>
+                    </td>
+                </tr>
+            {% endwith %}
         {% empty %}
             <tr>
                 <td colspan="4" class="text-center">
