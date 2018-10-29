@@ -1,6 +1,7 @@
 from typing import Type, Union
 
 from django.contrib import messages
+from django.contrib.auth import get_permission_codename
 from django.contrib.auth.models import Group
 from django.core.exceptions import ImproperlyConfigured
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
@@ -17,7 +18,10 @@ from django.views.generic import UpdateView
 from configfactory.forms.api_settings import APISettingsForm
 from configfactory.mixins import SuperuserRequiredMixin
 from configfactory.models import APISettings, Component, Environment, User
-from configfactory.services.permissions import update_permission, get_permissions
+from configfactory.services.permissions import (
+    get_permissions,
+    update_permission,
+)
 
 
 class UserOrGroupAccessMixin:
@@ -37,12 +41,6 @@ class PermissionsView(UserOrGroupAccessMixin, SuperuserRequiredMixin, View):
     object_model: Model = None
 
     paginate_by = 25
-
-    perm_view = None
-
-    perm_change = None
-
-    perm_delete = None
 
     def dispatch(self, request, *args, **kwargs):
         if isinstance(self.user_or_group, User) and self.user_or_group.is_superuser:
@@ -86,6 +84,11 @@ class PermissionsView(UserOrGroupAccessMixin, SuperuserRequiredMixin, View):
 
         permissions = get_permissions(user_or_group, page_obj.object_list)
 
+        opts = self.object_model._meta
+        perm_view = get_permission_codename('view', opts)
+        perm_change = get_permission_codename('change', opts)
+        perm_delete = get_permission_codename('delete', opts)
+
         return render(request, self.template_name, {
             'template_layout_name': self.template_layout_name,
             self.user_or_group_param: user_or_group,
@@ -93,9 +96,9 @@ class PermissionsView(UserOrGroupAccessMixin, SuperuserRequiredMixin, View):
             'object_name': self.object_model._meta.verbose_name,
             'object_name_plural': self.object_model._meta.verbose_name_plural,
             'page_obj': page_obj,
-            'perm_view': self.perm_view,
-            'perm_change': self.perm_change,
-            'perm_delete': self.perm_delete,
+            'perm_view': perm_view,
+            'perm_change': perm_change,
+            'perm_delete': perm_delete,
             'permissions': permissions,
             'search': search
         })
@@ -137,22 +140,10 @@ class EnvironmentPermissionsView(PermissionsView):
 
     object_model = Environment
 
-    perm_view = 'view_environment'
-
-    perm_change = 'change_environment'
-
-    perm_delete = 'delete_environment'
-
 
 class ComponentPermissionsView(PermissionsView):
 
     object_model = Component
-
-    perm_view = 'view_component'
-
-    perm_change = 'change_component'
-
-    perm_delete = 'delete_component'
 
 
 class APISettingsView(UserOrGroupAccessMixin, SuperuserRequiredMixin, UpdateView):
