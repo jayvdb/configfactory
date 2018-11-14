@@ -44,9 +44,8 @@ class ComponentForm(forms.ModelForm):
 
 class ComponentSchemaForm(forms.Form):
 
-    schema = JSONField(required=False, widget=forms.Textarea(attrs={
-        'rows': 32,
-        'style': 'width: 100%'
+    schema = JSONField(required=True, widget=forms.Textarea(attrs={
+        'hidden': True
     }))
 
 
@@ -57,9 +56,8 @@ class ComponentSettingsForm(forms.Form):
         self.component = component
         self.environment = environment
 
-    settings = JSONField(required=False, widget=forms.Textarea(attrs={
-        'rows': 32,
-        'style': 'width: 100%'
+    settings = JSONField(required=True, widget=forms.Textarea(attrs={
+        'hidden': True
     }))
 
     def clean_settings(self):

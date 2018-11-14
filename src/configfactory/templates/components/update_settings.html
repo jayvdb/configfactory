@@ -45,6 +45,7 @@
     {% endif %}
     <form method="post">
         {% csrf_token %}
+        <div id="json-editor"></div>
         {{ form.settings }}
         <br>
         <button class="btn btn-primary" onclick="return confirm('{% trans 'Are you sure you want to update settings?' %}')">
