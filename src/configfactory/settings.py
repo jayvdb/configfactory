@@ -62,7 +62,6 @@ MIDDLEWARE = [
     'configfactory.middleware.LoggingMiddleware',
     'configfactory.middleware.EnvironmentsMiddleware',
     'configfactory.middleware.ComponentsMiddleware',
-    'configfactory.api.middleware.AccessMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 

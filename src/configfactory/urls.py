@@ -41,6 +41,7 @@ from configfactory.views.profile import (
     ProfileUpdateView,
 )
 from configfactory.views.users import (
+    UserAccessUpdateView,
     UserAPISettingsView,
     UserChangePasswordView,
     UserComponentPermissionsView,
@@ -49,7 +50,7 @@ from configfactory.views.users import (
     UserEnvironmentPermissionsView,
     UserListView,
     UserUpdateView,
-    UserAccessUpdateView)
+)
 
 urlpatterns = [
 
@@ -217,9 +218,7 @@ urlpatterns = [
 ]
 
 if settings.DEBUG:
-
     import debug_toolbar
-
     urlpatterns = [
         path('__debug__/', include(debug_toolbar.urls))
     ] + urlpatterns

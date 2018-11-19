@@ -18,16 +18,20 @@ def run():
     scheduler = BackgroundScheduler()
 
     # Add jobs
-    scheduler.add_job(create_backup,
-                      kwargs={
-                          'comment': 'Scheduled backup'
-                      },
-                      trigger='interval',
-                      seconds=settings.BACKUPS_INTERVAL)
+    scheduler.add_job(
+        func=create_backup,
+        kwargs={
+            'comment': 'Scheduled backup'
+        },
+        trigger='interval',
+        seconds=settings.BACKUPS_INTERVAL
+    )
 
-    scheduler.add_job(clean_backups,
-                      trigger='interval',
-                      seconds=settings.BACKUPS_CLEAN_INTERVAL)
+    scheduler.add_job(
+        func=clean_backups,
+        trigger='interval',
+        seconds=settings.BACKUPS_CLEAN_INTERVAL
+    )
 
     # Start scheduler
     scheduler.start()
