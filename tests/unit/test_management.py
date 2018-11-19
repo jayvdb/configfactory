@@ -1,25 +1,26 @@
-from django.test import TestCase
+import pytest
 
 from configfactory.models import Environment
 
 
-class ManagementTestCase(TestCase):
+@pytest.mark.django_db
+def test_post_migrate_base_environment():
 
-    def test_post_migrate_base_environment(self):
+    environment = Environment.objects.base().get()
 
-        environment = Environment.objects.base().get()
+    assert environment.alias == 'base'
 
-        assert environment.alias == 'base'
 
-    def test_post_migrate_created_environments(self):
+@pytest.mark.django_db
+def test_post_migrate_created_environments():
 
-        assert Environment.objects.count() == 3
+    assert Environment.objects.count() == 3
 
-        development = Environment.objects.get(alias='development')
+    development = Environment.objects.get(alias='development')
 
-        assert development.name == 'Development'
+    assert development.name == 'Development'
 
-        testing = Environment.objects.get(alias='testing')
+    testing = Environment.objects.get(alias='testing')
 
-        assert testing.name == 'Testing'
-        assert testing.fallback == development
+    assert testing.name == 'Testing'
+    assert testing.fallback == development
