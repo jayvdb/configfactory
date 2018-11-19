@@ -3,14 +3,14 @@ import os
 import dj_database_url
 from django.core.exceptions import ImproperlyConfigured
 
-from configfactory.support import appdir, appenv
+from configfactory.support import paths, env
 from configfactory.support.config import config
 from configfactory.support.logging import debug_logging
 
 ###########################################
 # Main settings
 ###########################################
-DEBUG = appenv.debug_enabled()
+DEBUG = env.debug_enabled()
 
 SECRET_KEY = config.get('secret_key', default='28$0ld^(u&7o%f_e4sqh@rl&lere4kzsca#@&6@f+#5k7r963b')
 
@@ -90,7 +90,7 @@ STATICFILES_FINDERS = (
 )
 
 STATICFILES_DIRS = (
-    appdir.package_dir('static'),
+    paths.app_path('static'),
 )
 
 ################################################################
@@ -98,12 +98,12 @@ STATICFILES_DIRS = (
 ################################################################
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = config.get('data_dir', default=appdir.var_dir('data'))
+MEDIA_ROOT = config.get('data_dir', default=paths.var_path('data'))
 
 ######################################
 # Logging settings
 ######################################
-LOGGING_DIR = config.get('logging.directory', appdir.var_dir('log'))
+LOGGING_DIR = config.get('logging.directory', paths.var_path('log'))
 
 LOGGING_FILENAME = config.get('logging.filename', 'configfactory.log')
 

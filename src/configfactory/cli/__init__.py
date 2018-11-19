@@ -2,7 +2,7 @@ import click
 
 from configfactory.cli import commands
 from configfactory.cli.utils import version_option
-from configfactory.support import appenv
+from configfactory.support import env
 
 
 @click.group()
@@ -13,7 +13,7 @@ def cli():
 def main():
 
     # Set default application environment variables
-    appenv.set_production_defaults()
+    env.set_production_defaults()
 
     # Add version option
     cli.params.append(version_option)
@@ -23,7 +23,7 @@ def main():
     cli.add_command(commands.init_command)
 
     # Add development commands
-    if appenv.is_development():
+    if env.is_development():
         cli.add_command(commands.django_group)
 
     cli()

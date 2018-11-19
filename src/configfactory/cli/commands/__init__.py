@@ -3,7 +3,7 @@ from multiprocessing import Process, cpu_count
 import click
 from django.core.management import execute_from_command_line
 
-from configfactory.support import appenv
+from configfactory.support import env
 from configfactory.support.config import config
 
 
@@ -11,7 +11,7 @@ from configfactory.support.config import config
 @click.option(
     'config_path',
     '--config',
-    envvar=appenv.VAR_CONFIG,
+    envvar=env.VAR_CONFIG,
     type=click.Path(writable=True, readable=True, resolve_path=True)
 )
 def init_command(config_path):

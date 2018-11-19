@@ -6,7 +6,7 @@ import shutil
 import appdirs
 from django.utils.functional import LazyObject, cached_property
 
-from configfactory.support import appdir
+from configfactory.support import paths
 
 logger = logging.getLogger(__name__)
 
@@ -41,7 +41,7 @@ class Config:
         if os.path.exists(env_or_user_data_path):
             return env_or_user_data_path
 
-        project_path = appdir.root_dir(self.target_filename)
+        project_path = paths.root_path(self.target_filename)
         if os.path.exists(project_path):
             return project_path
 
@@ -96,7 +96,7 @@ class Config:
     def getint(self, name, default=None, strict=None):
         return self.get(name, default=default, strict=strict, as_type=int)
 
-    def getboolean(self, name, default=None, strict=None):
+    def getbool(self, name, default=None, strict=None):
         return self.get(name, default=default, strict=strict, as_type=bool)
 
     def getlist(self, name, default=None, strict=None):
