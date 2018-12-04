@@ -1,3 +1,5 @@
+import contextlib
+import threading
 from typing import Dict
 
 from django.conf import settings
@@ -9,21 +11,20 @@ from configfactory.configstore.filesystem import FileSystemConfigStore
 from configfactory.configstore.memory import MemoryConfigStore
 from configfactory.utils import json
 
+_cached_data = threading.local()
+_cached_data_key = 'settings'
+
 
 class ConfigStoreSetup(LazyObject):
 
-    registry = {
-        'memory': MemoryConfigStore,
-        'filesystem': FileSystemConfigStore,
-        'database': DatabaseConfigStore
-    }
-
     def _setup(self):
-        klass = self.registry[settings.CONFIGSTORE_BACKEND]
-        if settings.CONFIGSTORE_OPTIONS:
-            instance = klass(**settings.CONFIGSTORE_OPTIONS)
+        backend = settings.CONFIGSTORE_BACKEND
+        if backend == 'filesystem':
+            instance = FileSystemConfigStore(settings.CONFIGSTORE_DIRECTORY)
+        elif backend == 'database':
+            instance = DatabaseConfigStore()
         else:
-            instance = klass()
+            instance = MemoryConfigStore()
         self._wrapped = instance
 
 
@@ -33,8 +34,16 @@ _store: ConfigStore = ConfigStoreSetup()
 #########################################
 # Public API
 #########################################
+@contextlib.contextmanager
+def cached_data():
+    setattr(_cached_data, _cached_data_key, get_all_data())
+    yield
+    delattr(_cached_data, _cached_data_key)
+
 
 def get_all_data() -> Dict[str, Dict[str, dict]]:
+    if hasattr(_cached_data, _cached_data_key):
+        return getattr(_cached_data, _cached_data_key)
     ret = {}
     for environment, component_data in _store.get_all_data().items():
         ret[environment] = {}

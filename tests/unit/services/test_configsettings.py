@@ -1,6 +1,7 @@
 import pytest
 from django.test import TestCase
 
+from configfactory import configstore
 from configfactory.exceptions import InvalidSettingsError
 from configfactory.services.configsettings import (
     get_all_settings,
@@ -9,7 +10,6 @@ from configfactory.services.configsettings import (
     get_settings_inject_keys,
     inject_settings_params,
     update_settings,
-    use_cached_settings,
     validate_settings,
 )
 from configfactory.test.factories import ComponentFactory, EnvironmentFactory
@@ -77,7 +77,7 @@ class ConfigSettingsServiceTestCase(TestCase):
             get_all_settings()
 
         with self.assertNumQueries(1):
-            with use_cached_settings():
+            with configstore.cached_data():
                 get_all_settings()
                 get_all_settings()
                 get_all_settings()

@@ -1,5 +1,3 @@
-import contextlib
-import threading
 from typing import Dict, Iterable, Set, Union
 
 import dictdiffer
@@ -16,24 +14,11 @@ from configfactory.exceptions import (
 from configfactory.models import Component, Environment
 from configfactory.utils import dicthelper, json, security, tplparams
 
-_cached_settings = threading.local()
-_cached_settings_key = 'settings'
-
-
-@contextlib.contextmanager
-def use_cached_settings():
-    setattr(_cached_settings, _cached_settings_key, get_all_settings())
-    yield
-    delattr(_cached_settings, _cached_settings_key)
-
 
 def get_all_settings() -> Dict[str, Dict[str, dict]]:
     """
     Get all settings.
     """
-
-    if hasattr(_cached_settings, _cached_settings_key):
-        return getattr(_cached_settings, _cached_settings_key)
 
     all_data = configstore.get_all_data()
 
