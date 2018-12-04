@@ -1,19 +1,19 @@
 from configfactory.models import Config
 
-from .base import ConfigStore
+from .base import AllData, ConfigStore
 
 
 class DatabaseConfigStore(ConfigStore):
 
-    def get_all_data(self) -> dict:
-        settings = {}
+    def get_all_data(self) -> AllData:
+        data: AllData = {}
         for config in Config.objects.all():
-            if config.environment not in settings:
-                settings[config.environment] = {}
-            settings[config.environment][config.component] = config.data
-        return settings
+            if config.environment not in data:
+                data[config.environment] = {}
+            data[config.environment][config.component] = config.data
+        return data
 
-    def update_data(self, environment: str, component: str, data: dict):
+    def update_data(self, environment: str, component: str, data: str):
         config, created = Config.objects.get_or_create(
             environment=environment,
             component=component,

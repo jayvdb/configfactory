@@ -1,6 +1,6 @@
 import os
 
-from .base import ConfigStore
+from .base import AllData, ConfigStore
 
 
 class FileSystemConfigStore(ConfigStore):
@@ -9,9 +9,9 @@ class FileSystemConfigStore(ConfigStore):
         self.directory = directory
         os.makedirs(self.directory, exist_ok=True)
 
-    def get_all_data(self) -> dict:
+    def get_all_data(self) -> AllData:
 
-        data = {}
+        data: AllData = {}
 
         for root, dirs, files in os.walk(self.directory):
             if root == self.directory:

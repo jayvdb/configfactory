@@ -1,11 +1,13 @@
 import abc
 from typing import Dict
 
+AllData = Dict[str, Dict[str, str]]
+
 
 class ConfigStore(abc.ABC):
 
     @abc.abstractmethod
-    def get_all_data(self) -> Dict[str, Dict[str, str]]:
+    def get_all_data(self) -> AllData:
         pass
 
     @abc.abstractmethod
