@@ -1,3 +1,3 @@
-from .base import Config, ConfigHandler
+from .base import Config, ConfigSetup
 
-config: Config = ConfigHandler()
+config: Config = ConfigSetup()

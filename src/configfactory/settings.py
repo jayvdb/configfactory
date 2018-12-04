@@ -267,7 +267,7 @@ SECURE_KEYS = config.getlist('secure_keys', default=['pass', 'password'])
 # ConfigStore settings
 CONFIGSTORE_BACKEND = config.get('configstore.backend', default='database')
 
-CONFIGSTORE_OPTIONS = config.getdict('configstore.options.', default={})
+CONFIGSTORE_DIRECTORY = config.get('configstore.filesystem.directory', default=paths.var_path('data/configstore'))
 
 # Backups settings
 BACKUPS_INTERVAL = config.getint('backup.interval', default=7200)  # Every 2 hours
