@@ -12,7 +12,7 @@ def test_empty_data(store: MemoryConfigStore):
     assert not store.get_all_data()
 
 
-def test_update_and_get_data(store: MemoryConfigStore):
+def test_update_data(store: MemoryConfigStore):
     store.update_data('dev', 'db', 'dev:db:data')
 
     assert store.get_all_data() == {
