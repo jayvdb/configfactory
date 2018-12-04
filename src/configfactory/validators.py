@@ -1,6 +1,8 @@
 import jsonschema
+from django.core.exceptions import ValidationError
+from django.utils.translation import ugettext_lazy as _
 
-SETTINGS_SCHEMA = {
+SETTINGS_JSONSCHEMA = {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "$ref": "#/definitions/settings",
@@ -40,17 +42,8 @@ SETTINGS_SCHEMA = {
 }
 
 
-class JSONSchemaError(Exception):
-    def __init__(self, message: str):
-        self.message = message
-
-
-def validate(instance, schema: dict):
+def validate_settings_format(value: dict):
     try:
-        jsonschema.validate(instance, schema=schema)
-    except (jsonschema.ValidationError, jsonschema.SchemaError) as exc:
-        raise JSONSchemaError(exc.message)
-
-
-def validate_settings(instance: dict):
-    validate(instance, schema=SETTINGS_SCHEMA)
+        jsonschema.validate(value, schema=SETTINGS_JSONSCHEMA)
+    except (jsonschema.ValidationError, jsonschema.SchemaError):
+        raise ValidationError(_('Invalid settings format.'))

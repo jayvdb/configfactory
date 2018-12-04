@@ -1,14 +1,15 @@
 import pytest
+from django.core.exceptions import ValidationError
 
-from configfactory.utils import jsonschema
+from configfactory.validators import validate_settings_format
 
 
 def test_validate_settings_object_type():
-    jsonschema.validate_settings({})
+    validate_settings_format({})
 
 
 def test_validate_settings_object_property_types():
-    jsonschema.validate_settings({
+    validate_settings_format({
         'string': 'string',
         'number': 1.5,
         'boolean': True,
@@ -27,8 +28,8 @@ def test_validate_settings_object_property_types():
 
 
 def test_validate_settings_invalid_list_property():
-    with pytest.raises(jsonschema.JSONSchemaError):
-        jsonschema.validate_settings({
+    with pytest.raises(ValidationError):
+        validate_settings_format({
             'list': [
                 {
                     'a': 1

@@ -6,11 +6,7 @@ from typing import Dict, List
 import jsonschema
 from django.core.exceptions import ValidationError
 
-from configfactory.utils import dicthelper, tplparams
-
-
-class JSONLoadError(Exception):
-    pass
+from configfactory.utils import dicthelper, json, tplparams, security
 
 
 class DotEnvFormatError(Exception):
@@ -78,10 +74,7 @@ class SettingsDict(Mapping):
         """
         Create settings dict from JSON string.
         """
-        try:
-            data = json.loads(s)
-        except Exception as exc:
-            raise JSONLoadError(f'Invalid JSON: {exc}.')
+        data = json.loads(s)
         return cls(data)
 
     @property
@@ -143,8 +136,9 @@ class SettingsDict(Mapping):
     def encrypt(self) -> 'SettingsDict':
         pass
 
-    def decrypt(self) -> 'SettingsDict':
-        pass
+    def decrypt(self, secure_keys: List[str]) -> 'SettingsDict':
+        data = security.decrypt(self._data, secure_keys=secure_keys)
+        return SettingsDict(data)
 
     def to_dict(self) -> dict:
         """
@@ -184,8 +178,6 @@ class SettingsDict(Mapping):
                     value = 'true'
                 else:
                     value = 'false'
-            elif isinstance(value, dict):
-                value = json.dumps(value, compress=True)
 
             path = key.upper().replace('.', '_')
             rows.append(f'{path}={value}')
