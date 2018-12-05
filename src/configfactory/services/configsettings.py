@@ -3,6 +3,7 @@ from typing import Dict, Iterable, Set, Union
 import dictdiffer
 import jsonschema
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from configfactory import configstore
@@ -13,6 +14,7 @@ from configfactory.exceptions import (
 )
 from configfactory.models import Component, Environment
 from configfactory.utils import dicthelper, json, security, tplparams
+from configfactory.validators import validate_settings_format
 
 
 def get_all_settings() -> Dict[str, Dict[str, dict]]:
@@ -91,6 +93,12 @@ def validate_settings(environment: Environment, component: Component, data: dict
     """
     Update component settings.
     """
+
+    # Validate settings format
+    try:
+        validate_settings_format(data)
+    except ValidationError as exc:
+        raise InvalidSettingsError(exc.message)
 
     # Validate changed component referred keys
     setting_keys = list(dicthelper.flatten(

@@ -5,7 +5,7 @@ from django.forms import fields
 from configfactory.utils import json
 
 
-class JSONField(fields.CharField):
+class JSONObjectField(fields.CharField):
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault('widget', forms.Textarea())
@@ -18,16 +18,8 @@ class JSONField(fields.CharField):
                 if isinstance(value, list):
                     raise ValidationError("JSON must be an object.")
             except json.JSONLoadError:
-                raise ValidationError("Enter valid JSON")
+                raise ValidationError("Enter valid JSON.")
         return value
-
-    def clean(self, value):
-        if not value and not self.required:
-            return None
-        try:
-            return super().clean(value)
-        except TypeError:
-            raise ValidationError("Enter valid JSON")
 
     def prepare_value(self, value):
         if isinstance(value, dict):

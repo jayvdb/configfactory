@@ -5,7 +5,7 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from configfactory.exceptions import InvalidSettingsError
-from configfactory.forms.fields import JSONField
+from configfactory.forms.fields import JSONObjectField
 from configfactory.forms.layout import Back
 from configfactory.models import Component
 from configfactory.services.configsettings import validate_settings
@@ -44,7 +44,7 @@ class ComponentForm(forms.ModelForm):
 
 class ComponentSchemaForm(forms.Form):
 
-    schema = JSONField(required=True, widget=forms.Textarea(attrs={
+    schema = JSONObjectField(required=True, widget=forms.Textarea(attrs={
         'hidden': True
     }))
 
@@ -56,7 +56,7 @@ class ComponentSettingsForm(forms.Form):
         self.component = component
         self.environment = environment
 
-    settings = JSONField(required=True, widget=forms.Textarea(attrs={
+    settings = JSONObjectField(required=True, widget=forms.Textarea(attrs={
         'hidden': True
     }))
 
@@ -71,6 +71,6 @@ class ComponentSettingsForm(forms.Form):
                 data=data,
             )
         except InvalidSettingsError as exc:
-            raise ValidationError(str(exc))
+            raise ValidationError(str(exc.message))
 
         return data
