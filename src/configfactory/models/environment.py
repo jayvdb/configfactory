@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from configfactory.managers import EnvironmentManager
+from configfactory.models.managers import EnvironmentManager
 from configfactory.shortcuts import is_base_environment
 
 

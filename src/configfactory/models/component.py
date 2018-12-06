@@ -2,7 +2,7 @@ from django.db import models
 from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 
-from configfactory.managers import ComponentManager
+from configfactory.models.managers import ComponentManager
 from configfactory.utils import json
 
 

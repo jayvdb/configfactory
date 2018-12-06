@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
-from configfactory.managers import BackupManager
+from configfactory.models.managers import BackupManager
 
 
 class Backup(models.Model):
