@@ -184,12 +184,12 @@ def validate_settings(environment: Environment, component: Component, data: dict
             )
 
 
-def update_settings(environment: Environment, component: Component, data: dict, run_validation: bool = True):
+def update_settings(environment: Environment, component: Component, data: dict, validate: bool = True):
     """
     Update settings.
     """
 
-    if run_validation:
+    if validate:
         validate_settings(
             environment=environment,
             component=component,
@@ -228,7 +228,10 @@ def delete_settings(environment: Environment, component: Component):
     """
     Delete settings from store.
     """
-    configstore.delete_data(environment=environment.alias, component=component.alias)
+    configstore.delete_data(
+        environment=environment.alias,
+        component=component.alias
+    )
 
 
 def cleanup_settings():

@@ -24,7 +24,7 @@ component_updated = Signal(providing_args=['component', 'old_data'])
 
 component_alias_changed = Signal(providing_args=['component', 'old_alias', 'new_alias'])
 
-component_deleted = Signal(providing_args=['component'])
+component_deleted = Signal(providing_args=['component', 'user'])
 
 settings_updated = Signal(providing_args=['component', 'environment', 'old_settings', 'new_settings'])
 

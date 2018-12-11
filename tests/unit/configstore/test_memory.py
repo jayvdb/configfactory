@@ -9,13 +9,13 @@ def store():
 
 
 def test_empty_data(store: MemoryConfigStore):
-    assert not store.get_all_data()
+    assert not store.all()
 
 
 def test_update_data(store: MemoryConfigStore):
-    store.update_data('dev', 'db', 'dev:db:data')
+    store.update('dev', 'db', 'dev:db:data')
 
-    assert store.get_all_data() == {
+    assert store.all() == {
         'dev': {
             'db': 'dev:db:data'
         }
@@ -23,9 +23,9 @@ def test_update_data(store: MemoryConfigStore):
 
 
 def test_delete_data(store: MemoryConfigStore):
-    store.update_data('dev', 'db', 'dev:db:data')
-    store.delete_data('dev', 'db')
+    store.update('dev', 'db', 'dev:db:data')
+    store.delete('dev', 'db')
 
-    assert store.get_all_data() == {
+    assert store.all() == {
         'dev': {}
     }

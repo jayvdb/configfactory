@@ -198,7 +198,7 @@ def component_alias_changed_handler(sender, component: Component, old_alias: str
             environment=environment,
             component=component,
             data=data_copy,
-            run_validation=False
+            validate=False
         )
 
 

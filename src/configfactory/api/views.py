@@ -18,6 +18,7 @@ from configfactory.utils import dicthelper
 
 
 class APIView(BaseAPIView):
+
     request: Request = None
 
     authentication_classes = (TokenAuthentication,)

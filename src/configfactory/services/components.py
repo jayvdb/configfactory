@@ -7,6 +7,7 @@ from configfactory.services.configsettings import (
     delete_settings,
     get_settings_inject_keys,
 )
+from configfactory.signals import component_deleted
 
 
 def get_user_components(user: User):
@@ -23,7 +24,7 @@ def get_user_components(user: User):
     )
 
 
-def delete_component(component: Component):
+def delete_component(component: Component, user: User = None):
     """
     Delete component.
     """
@@ -57,3 +58,6 @@ def delete_component(component: Component):
     # Delete from config store
     for environment in environments:
         delete_settings(environment=environment, component=component)
+
+    # Notify about deleted component
+    component_deleted.send(sender=Component, component=component, user=user)

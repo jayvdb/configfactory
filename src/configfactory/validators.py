@@ -42,7 +42,7 @@ SETTINGS_JSONSCHEMA = {
 }
 
 
-def validate_settings_format(value: dict):
+def validate_settings_format(value: dict) -> None:
     try:
         jsonschema.validate(value, schema=SETTINGS_JSONSCHEMA)
     except (jsonschema.ValidationError, jsonschema.SchemaError):

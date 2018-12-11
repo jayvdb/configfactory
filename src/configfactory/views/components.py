@@ -32,7 +32,6 @@ from configfactory.services.configsettings import (
 from configfactory.shortcuts import get_base_environment
 from configfactory.signals import (
     component_created,
-    component_deleted,
     component_updated,
     settings_updated,
 )
@@ -157,7 +156,7 @@ class ComponentSchemaUpdateView(LoginRequiredMixin, UpdateView):
         return self.request.components
 
     def get_form_kwargs(self):
-        component = self.object  # type: Component
+        component: Component = self.object
         kwargs = super().get_form_kwargs()
         kwargs.pop('instance')
         kwargs['initial'] = {
@@ -167,7 +166,7 @@ class ComponentSchemaUpdateView(LoginRequiredMixin, UpdateView):
 
     def form_valid(self, form):
 
-        component = self.object  # type: Component
+        component: Component = self.object
 
         old_data = {
             'schema': component.schema
@@ -224,7 +223,7 @@ class ComponentDeleteView(LoginRequiredMixin, ConfigStoreCachedMixin, DeleteView
         component = self.get_object()
 
         try:
-            delete_component(component)
+            delete_component(component, user=request.user)
         except ComponentDeleteError as e:
             messages.error(request, str(e), extra_tags=' alert-danger')
             return HttpResponseRedirect(
@@ -235,13 +234,6 @@ class ComponentDeleteView(LoginRequiredMixin, ConfigStoreCachedMixin, DeleteView
                     }
                 )
             )
-
-        # Notify about deleted component
-        component_deleted.send(
-            sender=Component,
-            component=component,
-            user=request.user
-        )
 
         messages.success(
             self.request,
@@ -404,7 +396,7 @@ class ComponentSettingsUpdateView(LoginRequiredMixin, ConfigStoreCachedMixin, Up
             environment=self.environment,
             component=component,
             data=new_settings,
-            run_validation=False
+            validate=False
         )
 
         # Notify about updated component settings

@@ -1,4 +1,4 @@
-from crispy_forms.bootstrap import FormActions, Tab, TabHolder
+from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Submit, Field, ButtonHolder
 from django import forms

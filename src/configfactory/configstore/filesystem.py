@@ -1,6 +1,7 @@
 import os
+from typing import Dict
 
-from .base import AllData, ConfigStore
+from .base import ConfigStore
 
 
 class FileSystemConfigStore(ConfigStore):
@@ -9,9 +10,9 @@ class FileSystemConfigStore(ConfigStore):
         self.directory = directory
         os.makedirs(self.directory, exist_ok=True)
 
-    def get_all_data(self) -> AllData:
+    def all(self) -> Dict[str, Dict[str, str]]:
 
-        data: AllData = {}
+        data: Dict[str, Dict[str, str]] = {}
 
         for root, dirs, files in os.walk(self.directory):
             if root == self.directory:
@@ -28,11 +29,11 @@ class FileSystemConfigStore(ConfigStore):
                             data[environment][component] = fp.read()
         return data
 
-    def update_data(self, environment: str, component: str, data: str):
+    def update(self, environment: str, component: str, data: str):
         os.makedirs(os.path.join(self.directory, environment), exist_ok=True)
         with open(os.path.join(self.directory, environment, f'{component}.json'), 'w') as fp:
             fp.write(data)
 
-    def delete_data(self, environment: str, component: str):
+    def delete(self, environment: str, component: str):
         path = os.path.join(self.directory, environment, f'{component}.json')
         os.remove(path) if os.path.exists(path) else None
