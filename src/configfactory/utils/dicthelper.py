@@ -1,5 +1,4 @@
 import copy
-from typing import Callable, List, T
 
 
 def flatten(d: dict, parent_key='', sep='.') -> dict:
@@ -31,30 +30,3 @@ def merge(d1, d2):
         else:
             ret[key] = copy.deepcopy(value)
     return ret
-
-
-def traverse(obj: T, callback: Callable[[T, List[str]], T] = None, path: List[str] = None) -> T:
-    """
-    Traverse through nested dictionary.
-    """
-
-    if path is None:
-        path = []
-
-    if isinstance(obj, dict):
-        value = {
-            key: traverse(value, callback, path + [key])
-            for key, value in obj.items()
-        }
-    elif isinstance(obj, list):
-        value = [
-            traverse(elem, callback, path + [])
-            for elem in obj
-        ]
-    else:
-        if callback is None:
-            value = obj
-        else:
-            value = callback(obj, path)
-
-    return value

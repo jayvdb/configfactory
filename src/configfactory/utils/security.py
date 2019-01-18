@@ -7,7 +7,7 @@ from cryptography.fernet import Fernet
 from django.conf import settings
 from django.utils.functional import cached_property
 
-from configfactory.utils import dicthelper, json
+from configfactory.utils import itertool, json
 
 
 class Encryptor(abc.ABC):
@@ -83,10 +83,10 @@ def encrypt(data: dict, secure_keys: List[str]) -> dict:
 
     hidden_re = re.compile('|'.join(secure_keys), flags=re.IGNORECASE)
 
-    def _process(value: Any, key: List[str]) -> str:
+    def _process(value: Any, path: itertool.IterPath) -> str:
 
         if not is_encrypted(value):
-            path = '.'.join(key)
+            path = _str_path(path)
             if hidden_re.search(path):
                 encrypted_data = encrypt_data(json.dumps({
                     'value': value
@@ -95,17 +95,17 @@ def encrypt(data: dict, secure_keys: List[str]) -> dict:
 
         return value
 
-    return dicthelper.traverse(data, _process)
+    return itertool.traverse(data, _process)
 
 
 def decrypt(data: dict, secure_keys: List[str]) -> dict:
 
     hidden_re = re.compile('|'.join(secure_keys), flags=re.IGNORECASE)
 
-    def _process(value: Any, key: List[str]) -> Any:
+    def _process(value: Any, path: itertool.IterPath) -> Any:
 
         if is_encrypted(value):
-            path = '.'.join(key)
+            path = _str_path(path)
             if hidden_re.search(path):
                 encrypted_data = value.split(settings.ENCRYPT_PREFIX, maxsplit=1)[-1]
                 obj = decrypt_data(encrypted_data)
@@ -113,7 +113,7 @@ def decrypt(data: dict, secure_keys: List[str]) -> dict:
 
         return value
 
-    return dicthelper.traverse(data, _process)
+    return itertool.traverse(data, _process)
 
 
 def cleanse(data: dict, hidden='password', substitute='*****'):
@@ -123,10 +123,14 @@ def cleanse(data: dict, hidden='password', substitute='*****'):
 
     hidden_re = re.compile('|'.join(hidden), flags=re.IGNORECASE)
 
-    def _replace(value, key):
-        path = '.'.join(key)
+    def _replace(value, path: itertool.IterPath):
+        path = _str_path(path)
         if hidden_re.search(path):
             return substitute
         return value
 
-    return dicthelper.traverse(data, _replace)
+    return itertool.traverse(data, _replace)
+
+
+def _str_path(path: itertool.IterPath) -> str:
+    return '.'.join(filter(lambda item: isinstance(item, str), path))

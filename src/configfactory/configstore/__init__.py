@@ -9,7 +9,7 @@ from configfactory.configstore.base import ConfigStore
 from configfactory.configstore.database import DatabaseConfigStore
 from configfactory.configstore.filesystem import FileSystemConfigStore
 from configfactory.configstore.memory import MemoryConfigStore
-from configfactory.utils import dicthelper, json
+from configfactory.utils import dicthelper, itertool, json
 
 _cached_data = threading.local()
 _cached_data_key = 'settings'
@@ -45,7 +45,7 @@ def get_all_data() -> Dict[str, Dict[str, dict]]:
     if hasattr(_cached_data, _cached_data_key):
         return getattr(_cached_data, _cached_data_key)
     data = _store.all()
-    return dicthelper.traverse(data, lambda value, path: json.loads(value))
+    return itertool.traverse(data, lambda value, path: json.loads(value))
 
 
 def update_data(environment: str, component: str, data: dict):

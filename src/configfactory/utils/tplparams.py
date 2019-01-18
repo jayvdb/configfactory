@@ -1,7 +1,7 @@
 import re
 
 from configfactory.exceptions import CircularInjectError, InjectKeyError
-from configfactory.utils import dicthelper
+from configfactory.utils import itertool
 
 param_pattern = r'[a-zA-Z][(\-|\.)a-zA-Z0-9_]*'
 param_re = re.compile(r'(?<!\$)(\$(?:{param:(%(n)s)}))' % ({'n': param_pattern}))
@@ -15,7 +15,7 @@ def inject(data, params, strict=True, calls=0):
 
     # Travers data values
     if isinstance(data, (list, dict)):
-        return dicthelper.traverse(data, lambda value, key: inject(
+        return itertool.traverse(data, lambda value, key: inject(
             data=value,
             params=params,
             strict=strict

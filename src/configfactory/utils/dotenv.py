@@ -1,4 +1,4 @@
-from configfactory.utils import dicthelper
+from configfactory.utils import dicthelper, itertool
 
 
 def dumps(obj: dict) -> str:
@@ -10,5 +10,5 @@ def dumps(obj: dict) -> str:
         return f'{path}={value}'
 
     return'\n'.join(
-        dicthelper.traverse(obj, _process).values()
+        itertool.traverse(obj, _process).values()
     )
