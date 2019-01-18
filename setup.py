@@ -36,7 +36,8 @@ requires = [
     'colorlog==4.0.2',
     'dictdiffer==0.7.1',
     'faker==1.0.1',
-    'factory-boy==2.9.2'
+    'factory-boy==2.9.2',
+    'python-dotenv==0.10.1'
 ]
 
 setup(

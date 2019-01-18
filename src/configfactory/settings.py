@@ -10,7 +10,7 @@ from configfactory.support.logging import debug_logging
 ###########################################
 # Main settings
 ###########################################
-DEBUG = env.debug_enabled()
+DEBUG = env.debug()
 
 SECRET_KEY = config.get('secret_key', default='28$0ld^(u&7o%f_e4sqh@rl&lere4kzsca#@&6@f+#5k7r963b')
 
@@ -25,10 +25,12 @@ INTERNAL_IPS = ['127.0.0.1']
 ###########################################
 DATABASES = {
     'default': dj_database_url.config(
-        env='CONFIGFACTORY_DATABASE_URI',
+        env='DATABASE_URI',
         default=config['database.url']
     )
 }
+
+print(DATABASES)
 
 ###########################################
 # Template settings

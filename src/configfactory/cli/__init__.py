@@ -5,15 +5,13 @@ from configfactory.cli.utils import version_option
 from configfactory.support import env
 
 
-@click.group()
-def cli():
-    pass
-
-
 def main():
 
-    # Set default application environment variables
-    env.set_production_defaults()
+    # Set environment defaults
+    env.setdefaults()
+
+    # Create CLI instance
+    cli = click.Group()
 
     # Add version option
     cli.params.append(version_option)
@@ -23,7 +21,7 @@ def main():
     cli.add_command(commands.init_command)
 
     # Add development commands
-    if env.is_development():
+    if env.is_local():
         cli.add_command(commands.django_group)
 
     cli()
