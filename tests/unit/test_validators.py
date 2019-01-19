@@ -45,4 +45,4 @@ def test_validate_settings_invalid_list_property():
 
     exc: ValidationError = exc_info.value
 
-    assert exc.message == 'Invalid settings format.'
+    assert exc.message == 'Invalid `list.0` type.'

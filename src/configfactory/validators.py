@@ -1,49 +1,31 @@
-import jsonschema
+from typing import Any
+
 from django.core.exceptions import ValidationError
+from django.utils.deconstruct import deconstructible
 from django.utils.translation import ugettext_lazy as _
 
-SETTINGS_JSONSCHEMA = {
-    "$schema": "http://json-schema.org/draft-07/schema#",
-    "type": "object",
-    "$ref": "#/definitions/settings",
-    "definitions": {
-        "settings": {
-            "type": "object",
-            "patternProperties": {
-                "^.*$": {
-                    "anyOf": [
-                        {"type": "string"},
-                        {"type": "number"},
-                        {"type": "boolean"},
-                        {"type": "integer"},
-                        {"type": "null"},
-                        {
-                            "type": "array",
-                            "items": {
-                                "type": [
-                                    "string",
-                                    "number",
-                                    "boolean",
-                                    "integer",
-                                    "null"
-                                ]
-                            }
-                        },
-                        {
-                            "type": "object",
-                            "$ref": "#/definitions/settings"
-                        }
-                    ]
-                }
-            },
-            "additionalProperties": False
-        }
-    }
-}
+from configfactory.utils import dictutil
+
+
+@deconstructible
+class SettingsFormatValidator:
+
+    def __call__(self, data: dict):
+        data = dictutil.flatten(data)
+        for key, value in data.items():
+            self.validate_type(key, value)
+
+    def validate_type(self, key: str, value: Any):
+        if isinstance(value, list):
+            self.validate_list(key, value)
+        elif not isinstance(value, (int, str, float, bool)) and value is not None:
+            raise ValidationError(_('Invalid `%(key)s` type.') % {'key': key})
+
+    def validate_list(self, key: str, value: list):
+        for index, el in enumerate(value):
+            self.validate_type('.'.join([key, str(index)]), el)
 
 
 def validate_settings_format(value: dict) -> None:
-    try:
-        jsonschema.validate(value, schema=SETTINGS_JSONSCHEMA)
-    except (jsonschema.ValidationError, jsonschema.SchemaError):
-        raise ValidationError(_('Invalid settings format.'))
+    validate = SettingsFormatValidator()
+    validate(value)

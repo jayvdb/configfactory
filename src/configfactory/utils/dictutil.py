@@ -1,14 +1,10 @@
 import copy
 
 
-def merge(d1, d2):
+def merge(d1: dict, d2: dict) -> dict:
     """
     Merge two dictionaries.
     """
-
-    if not isinstance(d2, dict):
-        return d2
-
     ret = copy.deepcopy(d1)
     for key, value in d2.items():
         if key in ret and isinstance(ret[key], dict):
