@@ -214,7 +214,7 @@ def inject_settings_params(
     )
 
     return tplcontext.inject(
-        tpl=data,
+        template=data,
         context=params,
         strict=strict
     )
@@ -265,10 +265,7 @@ def get_settings_inject_keys(
         env_settings[component.alias] = data
 
     for component_alias, data in env_settings.items():
-        for match in tplcontext.KEY_RE.findall(json.dumps(data, compress=True)):
-            if component_alias not in inject_keys:
-                inject_keys[component_alias] = set()
-            key = match[1]
-            if key not in inject_keys[component_alias]:
-                inject_keys[component_alias].add(key)
+        keys = tplcontext.findkeys(json.dumps(data, compress=True))
+        if keys:
+            inject_keys[component_alias] = keys
     return inject_keys

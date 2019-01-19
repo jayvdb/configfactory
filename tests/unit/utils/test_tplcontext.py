@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from configfactory.utils import tplcontext
@@ -179,4 +181,29 @@ def test_inject_dict():
         'redis': {
             'url': '111.10.11.12:6601/1'
         }
+    }
+
+
+def test_keys():
+
+    template = {
+        'database': {
+            'host': '${hosts.db.ip}',
+            'port': '${hosts.db.port}',
+            'name': 'default',
+            'user': 'root',
+            'password': ''
+        },
+        'redis': {
+            'url': '${hosts.redis.ip}:${hosts.redis.port}/1'
+        }
+    }
+
+    keys = tplcontext.findkeys(json.dumps(template))
+
+    assert keys == {
+        'hosts.db.ip',
+        'hosts.db.port',
+        'hosts.redis.ip',
+        'hosts.redis.port'
     }
