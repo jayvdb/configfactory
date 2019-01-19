@@ -5,10 +5,12 @@ from configfactory.validators import validate_settings_format
 
 
 def test_validate_settings_object_type():
+
     validate_settings_format({})
 
 
 def test_validate_settings_object_property_types():
+
     validate_settings_format({
         'string': 'string',
         'number': 1.5,
@@ -28,7 +30,8 @@ def test_validate_settings_object_property_types():
 
 
 def test_validate_settings_invalid_list_property():
-    with pytest.raises(ValidationError):
+
+    with pytest.raises(ValidationError) as exc_info:
         validate_settings_format({
             'list': [
                 {
@@ -39,3 +42,7 @@ def test_validate_settings_invalid_list_property():
                 }
             ],
         })
+
+    exc: ValidationError = exc_info.value
+
+    assert exc.message == 'Invalid settings format.'
