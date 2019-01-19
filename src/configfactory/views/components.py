@@ -26,7 +26,7 @@ from configfactory.models import Component
 from configfactory.services.components import delete_component
 from configfactory.services.configsettings import (
     get_settings,
-    inject_settings_params,
+    inject_settings,
     update_settings,
 )
 from configfactory.shortcuts import get_base_environment
@@ -290,7 +290,7 @@ class ComponentSettingsView(LoginRequiredMixin, ConfigStoreCachedMixin, DetailVi
         )
 
         settings_dict = dictutil.flatten(settings_dict)
-        settings_dict = inject_settings_params(
+        settings_dict = inject_settings(
             environment=environment,
             data=settings_dict,
             components=self.request.components,

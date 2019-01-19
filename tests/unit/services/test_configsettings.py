@@ -8,7 +8,7 @@ from configfactory.services.configsettings import (
     get_environment_settings,
     get_settings,
     get_settings_inject_keys,
-    inject_settings_params,
+    inject_settings,
     update_settings,
     validate_settings,
 )
@@ -289,7 +289,7 @@ class ConfigSettingsServiceTestCase(TestCase):
             }
         )
 
-        data = inject_settings_params(
+        data = inject_settings(
             environment=self.base,
             data=get_settings(environment=self.base, component=self.db)
         )

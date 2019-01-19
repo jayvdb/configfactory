@@ -35,10 +35,7 @@ def get_environment_settings(environment: Environment, components: Iterable[Comp
         components = Component.objects.all()
 
     return {
-        component.alias: get_settings(
-            component=component,
-            environment=environment
-        )
+        component.alias: get_settings(environment, component=component)
         for component in components
     }
 
@@ -116,7 +113,7 @@ def validate_settings(environment: Environment, component: Component, data: dict
 
     # Validate injections
     try:
-        data = inject_settings_params(
+        data = inject_settings(
             environment=environment,
             data=data,
             strict=True
@@ -198,31 +195,32 @@ def update_settings(environment: Environment, component: Component, data: dict, 
     configstore.update_data(environment=environment.alias, component=component.alias, data=data)
 
 
-def inject_settings_params(
-        environment: Environment,
-        data: dict,
-        components: Iterable[Component]=None,
-        strict: bool=True
+def inject_settings(
+    environment: Environment,
+    data: dict,
+    components: Iterable[Component] = None,
+    strict: bool = True
 ) -> dict:
+    """
+    Inject settings keys.
+    """
 
     if components is None:
         components = Component.objects.all()
 
-    # Get filtered environment settings
-    params = dictutil.flatten(
-        get_environment_settings(environment, components=components)
-    )
+    env_settings = get_environment_settings(environment, components=components)
+    context = dictutil.flatten(env_settings)
 
     return tplcontext.inject(
         template=data,
-        context=params,
+        context=context,
         strict=strict
     )
 
 
 def delete_settings(environment: Environment, component: Component):
     """
-    Delete settings from store.
+    Delete settings.
     """
     configstore.delete_data(
         environment=environment.alias,
@@ -246,16 +244,15 @@ def cleanup_settings():
 
 
 def get_settings_inject_keys(
-        environment: Environment,
-        component: Component=None,
-        data: dict=None
+    environment: Environment,
+    component: Component = None,
+    data: dict = None
 ) -> Dict[str, Set[str]]:
     """
     Get components inject keys.
     """
 
-    if data is None:
-        data = {}
+    data = data or {}
 
     inject_keys = {}
     env_settings = get_environment_settings(environment)
