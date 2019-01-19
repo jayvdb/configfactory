@@ -35,7 +35,7 @@ from configfactory.signals import (
     component_updated,
     settings_updated,
 )
-from configfactory.utils import dicthelper, security
+from configfactory.utils import dictutil, security
 from configfactory.utils.db import model_to_dict
 
 
@@ -289,7 +289,7 @@ class ComponentSettingsView(LoginRequiredMixin, ConfigStoreCachedMixin, DetailVi
             hidden=settings.SECURE_KEYS,
         )
 
-        settings_dict = dicthelper.flatten(settings_dict)
+        settings_dict = dictutil.flatten(settings_dict)
         settings_dict = inject_settings_params(
             environment=environment,
             data=settings_dict,

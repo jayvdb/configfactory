@@ -3,7 +3,7 @@ from typing import Any, Dict, Union
 
 from django.utils.translation import ugettext_lazy as _
 
-from configfactory.utils import itertool
+from configfactory.utils import iterutil
 
 KEY_PATTERN = r'[a-zA-Z][(\-|\.)a-zA-Z0-9_]*'
 KEY_RE = re.compile(r'(?<!\$)(\$(?:{(%(n)s)}))' % ({'n': KEY_PATTERN}))
@@ -33,7 +33,7 @@ def inject(tpl: Template, context: Dict[str, Any], strict: bool = True, calls: i
 
     # Traverse tpl values
     if isinstance(tpl, (list, dict)):
-        return itertool.traverse(tpl, lambda value, key: inject(
+        return iterutil.traverse(tpl, lambda value, key: inject(
             tpl=value,
             context=context,
             strict=strict

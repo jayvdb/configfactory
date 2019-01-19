@@ -14,7 +14,7 @@ from configfactory.services.configsettings import get_environment_settings
 from configfactory.services.environments import (
     get_user_or_group_view_environments,
 )
-from configfactory.utils import dicthelper
+from configfactory.utils import dictutil
 
 
 class APIView(BaseAPIView):
@@ -52,5 +52,5 @@ class SettingsAPIView(ConfigStoreCachedMixin, APIView):
 
     def get(self, request, environment: str, **kwargs):
         environment = get_object_or_404(self.environments, alias=environment)
-        data = dicthelper.flatten(get_environment_settings(environment))
+        data = dictutil.flatten(get_environment_settings(environment))
         return Response(data)

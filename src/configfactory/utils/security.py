@@ -7,7 +7,7 @@ from cryptography.fernet import Fernet
 from django.conf import settings
 from django.utils.functional import cached_property
 
-from configfactory.utils import itertool, json
+from configfactory.utils import iterutil, json
 
 
 class Encryptor(abc.ABC):
@@ -83,7 +83,7 @@ def encrypt(data: dict, secure_keys: List[str]) -> dict:
 
     hidden_re = re.compile('|'.join(secure_keys), flags=re.IGNORECASE)
 
-    def _process(value: Any, path: itertool.IterPath) -> str:
+    def _process(value: Any, path: iterutil.IterPath) -> str:
 
         if not is_encrypted(value):
             path = _str_path(path)
@@ -95,14 +95,14 @@ def encrypt(data: dict, secure_keys: List[str]) -> dict:
 
         return value
 
-    return itertool.traverse(data, _process)
+    return iterutil.traverse(data, _process)
 
 
 def decrypt(data: dict, secure_keys: List[str]) -> dict:
 
     hidden_re = re.compile('|'.join(secure_keys), flags=re.IGNORECASE)
 
-    def _process(value: Any, path: itertool.IterPath) -> Any:
+    def _process(value: Any, path: iterutil.IterPath) -> Any:
 
         if is_encrypted(value):
             path = _str_path(path)
@@ -113,7 +113,7 @@ def decrypt(data: dict, secure_keys: List[str]) -> dict:
 
         return value
 
-    return itertool.traverse(data, _process)
+    return iterutil.traverse(data, _process)
 
 
 def cleanse(data: dict, hidden='password', substitute='*****'):
@@ -123,14 +123,14 @@ def cleanse(data: dict, hidden='password', substitute='*****'):
 
     hidden_re = re.compile('|'.join(hidden), flags=re.IGNORECASE)
 
-    def _replace(value, path: itertool.IterPath):
+    def _replace(value, path: iterutil.IterPath):
         path = _str_path(path)
         if hidden_re.search(path):
             return substitute
         return value
 
-    return itertool.traverse(data, _replace)
+    return iterutil.traverse(data, _replace)
 
 
-def _str_path(path: itertool.IterPath) -> str:
+def _str_path(path: iterutil.IterPath) -> str:
     return '.'.join(filter(lambda item: isinstance(item, str), path))

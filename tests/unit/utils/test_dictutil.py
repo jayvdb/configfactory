@@ -1,9 +1,9 @@
-from configfactory.utils import dicthelper
+from configfactory.utils import dictutil
 
 
 def test_merge_dicts():
 
-    actual = dicthelper.merge(
+    actual = dictutil.merge(
         {
             'a': 'one',
             'b': {
@@ -46,7 +46,7 @@ def test_merge_dicts():
 
 def test_merge_dict_with_lists():
 
-    actual = dicthelper.merge(
+    actual = dictutil.merge(
         {
             'key1': [
                 {
@@ -72,4 +72,31 @@ def test_merge_dict_with_lists():
                 'name': 'Test'
             }
         ]
+    }
+
+
+def test_flatten_dict():
+
+    actual = dictutil.flatten({
+        'a': {
+            'b': {
+                'c': {
+                    'd': 'e'
+                }
+            }
+        },
+        'f': 1,
+        'g': [1, 2, 3],
+        'h': {
+            'i': 1,
+            'j': 2
+        }
+    })
+
+    assert actual == {
+        'a.b.c.d': 'e',
+        'f': 1,
+        'g': [1, 2, 3],
+        'h.i': 1,
+        'h.j': 2,
     }

@@ -9,7 +9,7 @@ from django.utils.translation import ugettext_lazy as _
 from configfactory import configstore
 from configfactory.exceptions import InvalidSettingsError
 from configfactory.models import Component, Environment
-from configfactory.utils import dicthelper, json, security, tplcontext
+from configfactory.utils import dictutil, json, security, tplcontext
 from configfactory.validators import validate_settings_format
 
 
@@ -78,11 +78,11 @@ def get_settings(environment: Environment, component: Union[Component, str]) -> 
         if environment.fallback:
             try:
                 fallback_settings = env_settings[environment.fallback.alias][component_alias]
-                env_settings = dicthelper.merge(fallback_settings, env_settings)
+                env_settings = dictutil.merge(fallback_settings, env_settings)
             except KeyError:
                 pass
 
-        return dicthelper.merge(base_settings, env_settings)
+        return dictutil.merge(base_settings, env_settings)
 
 
 def validate_settings(environment: Environment, component: Component, data: dict):
@@ -97,7 +97,7 @@ def validate_settings(environment: Environment, component: Component, data: dict
         raise InvalidSettingsError(exc.message)
 
     # Validate changed component referred keys
-    setting_keys = list(dicthelper.flatten(
+    setting_keys = list(dictutil.flatten(
         {component.alias: data}
     ).keys())
 
@@ -209,7 +209,7 @@ def inject_settings_params(
         components = Component.objects.all()
 
     # Get filtered environment settings
-    params = dicthelper.flatten(
+    params = dictutil.flatten(
         get_environment_settings(environment, components=components)
     )
 

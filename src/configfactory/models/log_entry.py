@@ -7,7 +7,7 @@ from django.utils.translation import ugettext_lazy as _
 
 from configfactory import choices, constants
 from configfactory.models.component import Component
-from configfactory.utils import json, dicthelper
+from configfactory.utils import json, dictutil
 from configfactory.utils.security import decrypt_data
 
 
@@ -163,4 +163,4 @@ class LogEntry(models.Model):
                 data['settings'][environment] = settings_data
             except (KeyError, IndexError):
                 return {}
-        return dicthelper.flatten(data)
+        return dictutil.flatten(data)

@@ -1,9 +1,9 @@
-from configfactory.utils import itertool
+from configfactory.utils import iterutil
 
 
 def test_traverse_upper():
 
-    actual = itertool.traverse({
+    actual = iterutil.traverse({
         'a': 'one',
         'b': {
             'c': {
