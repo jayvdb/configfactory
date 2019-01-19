@@ -273,7 +273,7 @@ class ConfigSettingsServiceTestCase(TestCase):
             environment=self.base,
             component=self.credentials,
             data={
-                'username': '${param:users.db}',
+                'username': '${users.db}',
                 'password': 'secret'
             }
         )
@@ -282,10 +282,10 @@ class ConfigSettingsServiceTestCase(TestCase):
             environment=self.base,
             component=self.db,
             data={
-                'host': '${param:hosts.db}',
+                'host': '${hosts.db}',
                 'port': 3567,
-                'user': '${param:credentials.username}',
-                'pass': '${param:credentials.password}'
+                'user': '${credentials.username}',
+                'pass': '${credentials.password}'
             }
         )
 
@@ -323,7 +323,7 @@ class ConfigSettingsServiceTestCase(TestCase):
             environment=self.base,
             component=self.credentials,
             data={
-                'username': '${param:users.db}',
+                'username': '${users.db}',
                 'password': 'secret'
             }
         )
@@ -332,10 +332,10 @@ class ConfigSettingsServiceTestCase(TestCase):
             environment=self.base,
             component=self.db,
             data={
-                'host': '${param:hosts.db}',
+                'host': '${hosts.db}',
                 'port': 3567,
-                'user': '${param:credentials.username}',
-                'pass': '${param:credentials.password}'
+                'user': '${credentials.username}',
+                'pass': '${credentials.password}'
             }
         )
 
@@ -356,8 +356,8 @@ class ConfigSettingsServiceTestCase(TestCase):
             data={
                 'host': 'localhost',
                 'port': 3567,
-                'user': '${param:credentials.username}',
-                'pass': '${param:credentials.password}'
+                'user': '${credentials.username}',
+                'pass': '${credentials.password}'
             }
         )
 
@@ -377,7 +377,7 @@ class ConfigSettingsServiceTestCase(TestCase):
                 environment=self.base,
                 component=self.db,
                 data={
-                    'host': '${param:hosts.db}',
+                    'host': '${hosts.db}',
                     'port': 3567,
                     'user': 'root',
                     'password': '',
@@ -401,7 +401,7 @@ class ConfigSettingsServiceTestCase(TestCase):
             environment=self.base,
             component=self.db,
             data={
-                'host': '${param:hosts.db}',
+                'host': '${hosts.db}',
                 'port': 3567,
                 'user': 'root',
                 'password': '',
@@ -469,8 +469,8 @@ class ConfigSettingsServiceTestCase(TestCase):
                 environment=self.base,
                 component=self.db,
                 data={
-                    'host': '${param:hosts.db.host}',
-                    'port': '${param:hosts.db.port}',
+                    'host': '${hosts.db.host}',
+                    'port': '${hosts.db.port}',
                     'user': 'root',
                     'password': '',
                     'database': ''

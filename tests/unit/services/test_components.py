@@ -34,7 +34,7 @@ class ComponentsServiceTestCase(TestCase):
             environment=self.base,
             component=database,
             data={
-                'host': '${param:hosts.db}',
+                'host': '${hosts.db}',
                 'port': 3567,
                 'user': 'root',
                 'password': '',

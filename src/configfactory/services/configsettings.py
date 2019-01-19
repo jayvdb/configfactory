@@ -7,13 +7,9 @@ from django.core.exceptions import ValidationError
 from django.utils.translation import ugettext_lazy as _
 
 from configfactory import configstore
-from configfactory.exceptions import (
-    CircularInjectError,
-    InjectKeyError,
-    InvalidSettingsError,
-)
+from configfactory.exceptions import InvalidSettingsError
 from configfactory.models import Component, Environment
-from configfactory.utils import dicthelper, json, security, tplparams
+from configfactory.utils import dicthelper, json, security, tplcontext
 from configfactory.validators import validate_settings_format
 
 
@@ -125,9 +121,9 @@ def validate_settings(environment: Environment, component: Component, data: dict
             data=data,
             strict=True
         )
-    except InjectKeyError as exc:
+    except tplcontext.InvalidKey as exc:
         raise InvalidSettingsError(_('Injected key `%(key)s` does not exist.') % {'key': exc.key})
-    except CircularInjectError:
+    except tplcontext.CircularInjectError:
         raise InvalidSettingsError(_('Circular key injections detected.'))
     except Exception:
         raise InvalidSettingsError(_('Unknown settings validation error.'))
@@ -217,9 +213,9 @@ def inject_settings_params(
         get_environment_settings(environment, components=components)
     )
 
-    return tplparams.inject(
-        data=data,
-        params=params,
+    return tplcontext.inject(
+        tpl=data,
+        context=params,
         strict=strict
     )
 
@@ -269,7 +265,7 @@ def get_settings_inject_keys(
         env_settings[component.alias] = data
 
     for component_alias, data in env_settings.items():
-        for match in tplparams.param_re.findall(json.dumps(data, compress=True)):
+        for match in tplcontext.KEY_RE.findall(json.dumps(data, compress=True)):
             if component_alias not in inject_keys:
                 inject_keys[component_alias] = set()
             key = match[1]
