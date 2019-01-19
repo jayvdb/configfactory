@@ -352,12 +352,13 @@ class ConfigSettingsServiceTestCase(TestCase):
 
         inject_keys = get_settings_inject_keys(
             environment=self.base,
-            component=self.db,
-            data={
-                'host': 'localhost',
-                'port': 3567,
-                'user': '${credentials.username}',
-                'pass': '${credentials.password}'
+            override_settings={
+                self.db.alias: {
+                    'host': 'localhost',
+                    'port': 3567,
+                    'user': '${credentials.username}',
+                    'pass': '${credentials.password}'
+                }
             }
         )
 

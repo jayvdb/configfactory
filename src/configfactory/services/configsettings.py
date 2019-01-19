@@ -98,11 +98,9 @@ def validate_settings(environment: Environment, component: Component, data: dict
         {component.alias: data}
     ).keys())
 
-    inject_keys = get_settings_inject_keys(
-        environment=environment,
-        component=component,
-        data=data
-    )
+    inject_keys = get_settings_inject_keys(environment, override_settings={
+        component.alias: data
+    })
 
     for component_alias, keys in inject_keys.items():
         for key in keys:
@@ -243,26 +241,33 @@ def cleanup_settings():
             configstore.update_data(environment=environment, component=component, data=data)
 
 
-def get_settings_inject_keys(
-    environment: Environment,
-    component: Component = None,
-    data: dict = None
-) -> Dict[str, Set[str]]:
+def get_settings_inject_keys(environment: Environment, override_settings: dict = None) -> Dict[str, Set[str]]:
     """
-    Get components inject keys.
+    Get inject keys by component.
     """
-
-    data = data or {}
 
     inject_keys = {}
     env_settings = get_environment_settings(environment)
-
-    # Update with changed component settings
-    if component:
-        env_settings[component.alias] = data
+    env_settings.update(override_settings or {})
 
     for component_alias, data in env_settings.items():
         keys = tplcontext.findkeys(json.dumps(data, compress=True))
         if keys:
             inject_keys[component_alias] = keys
     return inject_keys
+
+
+def get_settings_referred_keys(environment: Environment, component: Component) -> Dict[str, Set[str]]:
+    """
+    Get settings keys referred to current component.
+    """
+
+    referred_keys = {}
+    inject_keys = get_settings_inject_keys(environment)
+
+    for component_alias, keys in inject_keys.items():
+        if component.alias == component_alias:
+            continue
+        referred_keys[component_alias] = {key for key in keys if key.startswith(component.alias)}
+
+    return referred_keys

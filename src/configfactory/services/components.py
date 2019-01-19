@@ -5,7 +5,7 @@ from configfactory.exceptions import ComponentDeleteError
 from configfactory.models import Component, Environment, User
 from configfactory.services.configsettings import (
     delete_settings,
-    get_settings_inject_keys,
+    get_settings_referred_keys,
 )
 from configfactory.signals import component_deleted
 
@@ -33,24 +33,15 @@ def delete_component(component: Component, user: User = None):
 
     for environment in environments:
 
-        inject_keys = get_settings_inject_keys(environment)
+        referred_keys = get_settings_referred_keys(environment, component=component)
 
-        for component_alias, keys in inject_keys.items():
-
-            if component.alias == component_alias:
-                continue
-
-            referred_keys = list(
-                filter(lambda k: k.startswith(component.alias), keys)
+        for component_alias, keys in referred_keys.items():
+            raise ComponentDeleteError(
+                _('Component `%(component)s` is referring to component `%(key)s` key(s).') % {
+                    'component': component_alias,
+                    'key': ', '.join(keys)
+                }
             )
-
-            if referred_keys:
-                raise ComponentDeleteError(
-                    _('Component `%(component)s` is referring to component `%(key)s` key.') % {
-                        'component': component_alias,
-                        'key': referred_keys[0]
-                    }
-                )
 
     # Delete database row
     component.delete()

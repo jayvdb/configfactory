@@ -1,3 +1,4 @@
+import pytest
 from django.test import TestCase
 
 from configfactory.exceptions import ComponentDeleteError
@@ -42,8 +43,10 @@ class ComponentsServiceTestCase(TestCase):
             }
         )
 
-        with self.assertRaises(ComponentDeleteError):
+        with pytest.raises(ComponentDeleteError) as exc_info:
             delete_component(hosts)
+
+        assert str(exc_info.value) == 'Component `database` is referring to component `hosts.db` key(s).'
 
     def test_delete_component(self):
 
